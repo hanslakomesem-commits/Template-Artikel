@@ -1,77 +1,51 @@
-# ZAIN.NET — Multi Template Artikel (Revisi Otomatis Tanpa API Key)
+# ZAIN.NET Multi Template Artikel — 100% GitHub Pages
 
-Sistem pemformatan dokumen Word untuk template **KARSA**, **RABBANI**, dan **AL-IHKAM**. Tidak memakai API OpenAI/Gemini, tidak meminta API key, dan tidak memakai Supabase.
+**Bisa langsung dipublikasikan di GitHub Pages. Tidak perlu API key, Render, Python, Node.js di hosting, Supabase, atau server pemrosesan.** Kode JavaScript dan JSZip dijalankan di browser pengguna. Dokumen artikel tidak diunggah ke layanan eksternal. Template DOCX disimpan di folder `templates/` dan dibaca dari situs statis melalui `fetch`.
 
-**PENTING:** Program tetap memakai **server Python/FastAPI** untuk mengolah DOCX. GitHub Pages sendiri hanya dapat menampilkan halaman web; GitHub Pages tidak dapat menjalankan kode Python.
+## Instalasi GitHub Pages
 
-## Pilihan 1 — Paling mudah: satu hosting untuk web + mesin dokumen
+1. Buat repository baru di GitHub, misalnya `zainnet-artikel`.
+2. Ekstrak berkas ZIP ini. Unggah **isinya** ke root repository (`index.html`, `formatter.js`, `app.js`, `vendor/`, `templates/`), bukan ZIP-nya saja. Jangan melewatkan folder template atau vendor.
+3. Buka **Settings → Pages → Build and deployment → Deploy from a branch**. Pilih branch `main`, folder `/(root)`, lalu Save.
+4. Setelah GitHub Pages berhasil publish, kunjungi URL yang muncul di Settings → Pages, biasanya `https://USERNAME.github.io/zainnet-artikel/`. Nama repo disesuaikan.
+5. Pilih jurnal, unggah artikel `.docx`, tekan **Proses & Download Word**. Unduhan diproses di browser. Jika tidak muncul otomatis, tekan tautan unduh yang muncul.
 
-Dengan pilihan ini semua fitur menggunakan **satu alamat website** dan tidak perlu mengatur alamat API satu kali pun.
+**Penting:** Membuka `index.html` melalui `file://` mungkin gagal memuat template karena keamanan browser. Gunakan GitHub Pages atau server file statis lokal seperti `python -m http.server 8000` untuk menguji. Perintah tersebut hanya untuk uji lokal; **tidak dibutuhkan** pada GitHub Pages.
 
-1. Ekstrak ZIP dan unggah **semua isi ZIP** ke repository GitHub (termasuk `templates/`, `backend/`, dan `render.yaml`). Jangan mengunggah ZIP sebagai satu file.
-2. Buka dashboard [Render](https://dashboard.render.com/), hubungkan akun GitHub, buat **New > Blueprint**, kemudian pilih repository tersebut. File `render.yaml` sudah berisi langkah deploy otomatis untuk layanan Python.
-3. Deploy sesuai konfigurasi pada `render.yaml`. Jika tersedia paket gratis, paket itu dapat dipilih; cek batas penggunaan/ketentuan penyedia sebelum menggunakannya. **Jangan memasukkan API key.**
-4. Setelah aktif, buka alamat website dari layanan Render. Web, `/health`, `/templates`, dan `/format` semuanya berada di alamat domain **yang sama**.
-5. Pastikan indikator menunjukkan **“Mesin pemroses terhubung”**. Unggah DOCX, pilih template, tekan **Proses & Download Word**.
+## Struktur source code
 
-Perintah server jika diinstal secara manual (jalankan dari root proyek):
+- `index.html`: aplikasi web yang responsif untuk HP dan PC.
+- `app.js`: tampilan, input, progres, dan unduh.
+- `formatter.js`: mesin pemformat DOCX client-side (menyunting XML OOXML sambil mempertahankan struktur dokumen sumber).
+- `vendor/jszip.min.js`: pustaka JSZip yang disertakan lokal, tidak memerlukan CDN atau akses ke layanan API.
+- `templates/karsa/template.docx`: template asli KARSA.
+- `templates/rabbani/template.docx`: template asli RABBANI.
+- `templates/alihkam/template.docx`: template asli AL-IHKAM.
+- `templates/*/rules.json`: deskripsi jurnal untuk pengembangan aturan selanjutnya.
 
-```bash
-python -m pip install -r backend/requirements.txt
-uvicorn backend.main:app --host 0.0.0.0 --port 8000
-```
+## Fitur
 
-Kemudian buka http://localhost:8000 melalui browser di komputer yang menjalankan server. `index.html` tidak perlu dibuka terpisah. Di hosting yang menyediakan variabel `$PORT`, gunakan start command di `render.yaml`.
+- Memilih template KARSA, RABBANI, AL-IHKAM.
+- Pemformatan judul, bagian artikel, abstrak, kata kunci, isi, dan referensi secara heuristik.
+- Mengambil ukuran halaman dan margin serta bagian header/footer contoh dari file template jurnal.
+- Nomor halaman `PAGE` pada footer yang memerlukan verifikasi akhir.
+- Kotak abstrak/sidebar pada mode RABBANI 2023 (beta).
+- Mempertahankan **paket DOCX sumber**, termasuk tabel, gambar, hyperlink, dan file footnote yang sudah ada, alih-alih membuat ulang artikel dari teks biasa.
+- Bekerja secara statis tanpa API key dan tanpa database. File artikel diproses di memori browser.
 
-## Pilihan 2 — Tetap menggunakan GitHub Pages untuk tampilan web
+## Batasan penting — jangan dilewatkan
 
-Gunakan pilihan ini hanya jika ingin halaman web tetap berada di GitHub Pages. **Butuh dua layanan:** GitHub Pages untuk tampilan dan hosting Python untuk mesin dokumen. URL Python hanya perlu diatur **sekali oleh admin**, bukan diisi mahasiswa.
+Ini versi **BETA**. Pemformatan Word sempurna/identik dengan semua tata letak template **belum terjamin**. Mesin ini tidak menjalankan Microsoft Word, sehingga hasil bisa berbeda pada tabel kompleks, logo/artwork header, sitasi, penomoran, section break, layout multi-kolom, footnote, dan halaman sampul. Urutan elemen dan konten sumber dipertahankan semaksimal mungkin; isinya tidak diterjemahkan atau dibuat menggunakan AI. Pemeriksaan akhir dengan Word atau LibreOffice tetap wajib. File `.doc` lama, PDF, dan JPG tidak didukung. Jumlah paragraf awal untuk judul perlu dipilih jika judul terdiri atas 2–3 paragraf. Browser lama atau perangkat RAM rendah mungkin lambat untuk file yang sangat besar. Tampilan offline membutuhkan server lokal atau pengaturan cache dan tidak dijamin; setelah GitHub Pages diakses, pemformatannya tidak menggunakan backend.
 
-1. Deploy backend ke Render atau hosting Python lain menggunakan repository yang sama dan pastikan alamat seperti `https://alamat-backend-anda.onrender.com/health` mengembalikan JSON dengan `"ok": true`.
-2. Di **file `config.js` pada root repository GitHub**, ubah konfigurasi:
+Template AL-IHKAM contoh relatif besar (sekitar 5,6 MB), sehingga pengunjung perlu mengunduh template itu satu kali saat memproses. Seluruh aset berlisensi milik masing-masing jurnal/pemilik aslinya dan digunakan sebagai acuan tata letak.
 
-   ```javascript
-   window.ZAINNET_CONFIG = {
-     apiBaseUrl: 'https://alamat-backend-anda.onrender.com'
-   };
-   ```
+## Diagnostik
 
-   Ganti URL contoh dengan **alamat backend sebenarnya** yang Anda terima setelah deploy. Jangan menambahkan `/format`, `/templates`, atau `/health`. URL ini **bukan API key** dan aman ditampilkan sebagai alamat layanan publik.
-3. Pastikan `index.html`, `config.js`, dan `app.js` diunggah bersama pada folder yang menjadi sumber GitHub Pages. Jika GitHub Pages dikonfigurasi dari folder root, gunakan berkas root; folder `frontend/` adalah salinan untuk deploy terpisah.
-4. Atur variabel `ALLOWED_ORIGINS` pada hosting Python sesuai alamat frontend, misalnya `https://USERNAME.github.io` atau domain kustom. Bila perlu mengizinkan lebih dari satu domain, pisahkan dengan koma. Variabel ini mengendalikan CORS, bukan autentikasi.
-5. Buka website GitHub Pages. Indikator koneksi akan diperiksa otomatis dan pengguna tidak perlu memasukkan URL apa pun.
+- **Mesin gagal dimuat:** pastikan `vendor/jszip.min.js` dan `formatter.js` terunggah utuh.
+- **Gagal mengambil template (404):** pastikan folder `templates/` dan nama direktori tepat, termasuk huruf kecil.
+- **Word menyatakan ada masalah pada file:** gunakan fungsi repair Word lalu laporkan file sumber + template; dokumen kompleks tertentu memerlukan konversi backend yang lebih lengkap.
+- **Font berbeda:** pasang font yang dibutuhkan template (Book Antiqua atau Times New Roman) di aplikasi pengolah Word.
 
-**Catatan:** Bila `config.js` masih kosong di GitHub Pages, akan muncul pesan konfigurasi untuk admin karena GitHub Pages tidak bisa menjalankan Python. Situs tidak dapat memproses DOCX sampai hosting backend benar-benar aktif. Untuk mode satu hosting, **biarkan `apiBaseUrl: ''`**.
+## Lisensi
 
-## Fitur yang dipertahankan
-
-- Pemilihan KARSA, RABBANI 2023/panduan web, dan AL-IHKAM 2026.
-- Upload DOCX (maksimum 15 MB) dan hasil unduh Word DOCX.
-- Metadata publikasi opsional, pengaturan jumlah paragraf judul, serta catatan validasi.
-- Pemroses asli memakai sumber DOCX agar media, tabel, dan footnote Word tetap terjaga pada kasus yang didukung.
-- Tautan unduh muncul setelah server memproses dokumen; verifikasi tata letak akhir tetap perlu dilakukan di Word.
-
-## Fitur yang diperbaiki
-
-- Kolom **Alamat mesin pemroses (API)** dihapus dari antarmuka pengguna.
-- URL mesin pemroses menggunakan **alamat website sendiri** secara otomatis bila frontend dan backend digabung.
-- Untuk GitHub Pages, URL disimpan hanya di **`config.js`**, tidak di localStorage/browser pengguna.
-- Indikator koneksi **Terhubung / Belum terhubung** dan tombol **Coba Sambungkan Lagi**.
-- Pemeriksaan layanan `/health` dan daftar `/templates` sebelum tombol pemrosesan diaktifkan.
-- Pengecekan tipe file dan batas ukuran file sebelum mengunggah.
-- Pesan gagal yang lebih jelas; pilihan template diambil dari backend.
-- `render.yaml` untuk deploy satu hosting; endpoint root `/` dan aset JS dilayani oleh FastAPI.
-
-## Pengujian
-
-```bash
-python -m pip install -r backend/requirements.txt
-python -m pip install httpx
-python -m unittest discover -s tests -v
-```
-
-Pengujian backend meliputi pemformatan dan detail layout ketiga jurnal, footnote/media, validasi file, CORS, serta akses halaman web/JS dari backend yang sama.
-
-## Batasan yang belum berubah
-
-Ini masih versi **beta**, bukan engine desain jurnal yang telah lulus verifikasi identik di semua jenis artikel. Header, pagination, tabel/gambar panjang, footnote, dan sitasi tertentu mungkin memerlukan pemeriksaan manual di Microsoft Word. Sistem belum menyiapkan PDF, login, antrean pengunjung, perlindungan terhadap penyalahgunaan layanan publik, ataupun penyimpanan arsip. Layanan hosting gratis dapat memiliki pembatasan sumber daya dan kondisi idle. Jika dipakai untuk mahasiswa dalam jumlah besar, gunakan hosting dengan kapasitas memadai dan tambahkan rate limit serta autentikasi sesuai kebutuhan.
+Kode ZAIN.NET disediakan untuk pengembangan sendiri. Pustaka `JSZip` MIT / GPLv3 (pilih salah satu lisensi sesuai proyek); lisensi sumber tersedia di https://github.com/Stuk/jszip . Hak template jurnal tetap pada pemilik masing-masing.

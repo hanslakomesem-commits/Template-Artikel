@@ -1,0 +1,13 @@
+ZAIN.NET MULTI TEMPLATE — KHUSUS GITHUB PAGES, TANPA API KEY
+Versi: 2.0 (GitHub Pages / browser only)
+Tanggal: 31 Oktober 2026
+
+PENTING:
+1. Unggah semua isi ZIP ini ke root repository GitHub, bukan ZIP mentah.
+2. Aktifkan Settings -> Pages -> Deploy from a branch -> main -> /(root).
+3. Tidak dibutuhkan Render, Python, Supabase, atau API key.
+4. Upload dokumen .docx max 15 MB. Lalu pilih template dan tekan Proses & Download Word.
+5. Uji browser dan ekspor Word berhasil untuk KARSA, RABBANI, AL-IHKAM.
+6. Hasil adalah BETA: verifikasi akhir dengan Word masih diperlukan sebelum dikirim jurnal.
+
+Untuk instruksi lengkap, baca README.md.
