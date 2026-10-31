@@ -105,4 +105,26 @@ class FormatTests(unittest.TestCase):
         r=self.client.post('/format',files={'file':('article.docx',self.source)},data={'template_id':'rabbani'},headers={'Origin':'https://example.com'})
         self.assertIn('X-Format-Warnings',r.headers['access-control-expose-headers'])
 
-if __name__=='__main__':unittest.main()
+class DeploymentTests(unittest.TestCase):
+    """Frontend FastAPI berjalan tanpa input alamat API atau API key."""
+    def setUp(self):
+        self.client=TestClient(app)
+
+    def test_frontend_served_from_same_backend(self):
+        page=self.client.get('/')
+        self.assertEqual(page.status_code,200)
+        self.assertIn('Format Artikel Otomatis',page.text)
+        self.assertNotIn('id="api"',page.text)
+        self.assertIn('src="config.js"',page.text)
+        self.assertIn('src="app.js"',page.text)
+        self.assertIn('id="connection"',page.text)
+        self.assertEqual(self.client.get('/config.js').status_code,200)
+        js=self.client.get('/app.js')
+        self.assertEqual(js.status_code,200)
+        self.assertIn('window.location.origin',js.text)
+        self.assertIn("apiBase + '/format'",js.text)
+        self.assertIn('apiBaseUrl',self.client.get('/config.js').text)
+        self.assertEqual(self.client.get('/health').json()['ok'],True)
+
+if __name__ == '__main__':
+    unittest.main()

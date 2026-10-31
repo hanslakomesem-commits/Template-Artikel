@@ -1,48 +1,77 @@
-# ZAIN.NET Multi Template Artikel — KARSA + RABBANI + AL-IHKAM
+# ZAIN.NET — Multi Template Artikel (Revisi Otomatis Tanpa API Key)
 
-Paket revisi menambahkan template kedua RABBANI. Frontend ada di index.html dan frontend/index.html (identik). Pemroses tetap Python/FastAPI; GitHub Pages saja tidak bisa menjalankan pemroses Word.
+Sistem pemformatan dokumen Word untuk template **KARSA**, **RABBANI**, dan **AL-IHKAM**. Tidak memakai API OpenAI/Gemini, tidak meminta API key, dan tidak memakai Supabase.
 
-Template ketiga: AL-IHKAM 2026, berdasarkan file docx.docx yang diunggah. Pilih AL-IHKAM di web; pemroses memakai Letter, margin 5/4,5 cm, abstrak tanpa panel, header/footer asli dan metadata editorial tersendiri. Rincian hasil pemeriksaan tujuh halaman ada di templates/alihkam/LAYOUT.md. Perbarui backend/alihkam.py dan seluruh folder templates/alihkam bersama frontend/backend utama.
+**PENTING:** Program tetap memakai **server Python/FastAPI** untuk mengolah DOCX. GitHub Pages sendiri hanya dapat menampilkan halaman web; GitHub Pages tidak dapat menjalankan kode Python.
 
-## Cara memperbarui web
-1. Ekstrak ZIP, lalu unggah seluruh isinya untuk menggantikan berkas proyek lama di GitHub.
-2. GitHub Pages: gunakan branch main dan folder / (root); index.html sudah tersedia di root.
-3. Perbarui backend juga, termasuk backend/rabbani.py dan folder templates/rabbani. Jangan hanya mengganti index.html.
-4. Install: pip install -r backend/requirements.txt
-5. Jalankan dari root proyek: uvicorn backend.main:app --host 0.0.0.0 --port 8000
-6. Pada hosting yang menyediakan PORT, start command: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
-7. Masukkan alamat backend HTTPS di halaman web, pilih RABBANI, unggah artikel DOCX, lalu Proses & Download Word.
-8. Atur ALLOWED_ORIGINS ke alamat frontend Anda, misalnya https://USERNAME.github.io.
+## Pilihan 1 — Paling mudah: satu hosting untuk web + mesin dokumen
 
-## RABBANI
-Sumber layout: templates/rabbani/template.docx, file asli yang diberikan pengguna (Template Jurnal Rabbani New 2023).
-Panduan: https://ejournal.uinmadura.ac.id/index.php/rabbani/AuthorGuidelines
+Dengan pilihan ini semua fitur menggunakan **satu alamat website** dan tidak perlu mengatur alamat API satu kali pun.
 
-Dua pilihan disediakan karena file dan panduan berbeda:
-- File template 2023 (default): judul 13 pt, abstrak 150–200 kata; abstrak dalam panel biru muda dan riwayat/kata kunci di sisi kanan.
-- Panduan web: judul 12 pt dengan spasi tunggal; abstrak satu kolom sekitar 150 kata. Peringatan memakai rentang toleransi 130–170, bukan batas resmi jurnal.
-- Keduanya: Book Antiqua, A4, margin 3 cm, isi 12 pt spasi 1,5, abstrak 11 pt spasi tunggal, daftar pustaka spasi tunggal.
-- Halaman 1: identitas jurnal di kiri, logo di kanan; footer hak cipta, tanggal editorial, rentang halaman, dan nomor halaman di kanan.
-- Halaman genap: penulis/judul pendek/DOI di kiri, logo kanan; footer diawali nomor halaman di kiri. Halaman ganjil lanjutan membalik posisi header dan menempatkan nomor halaman di akhir footer kanan.
-- Header dan footer ganjil/genap menggunakan struktur serta posisi gambar dari template asli. Font Book Antiqua dan Garamond yang tertanam dalam template ikut dibawa agar metrik teks tidak berubah karena penggantian font.
-- ABSTRACT bahasa Inggris lebih dahulu, lalu ABSTRAK Indonesia, dalam panel biru muda dengan bingkai. ARTICLE HISTORY dan KEYWORDS berada di kanan dengan bingkai tersendiri. Panel mengikuti aliran halaman; abstrak panjang dapat berlanjut ke halaman berikutnya. Isi tidak dipotong agar tampak sama dengan contoh pendek dalam template. Isi panel biru rata, bukan gradasi dekoratif template.
-- Metadata dapat diisi di web. Kolom kosong ditandai —; tahun, DOI, volume, tanggal dan halaman contoh tidak dipakai. Judul pendek otomatis dipotong pada batas kata bila terlalu panjang; pengguna dapat menggantinya.
+1. Ekstrak ZIP dan unggah **semua isi ZIP** ke repository GitHub (termasuk `templates/`, `backend/`, dan `render.yaml`). Jangan mengunggah ZIP sebagai satu file.
+2. Buka dashboard [Render](https://dashboard.render.com/), hubungkan akun GitHub, buat **New > Blueprint**, kemudian pilih repository tersebut. File `render.yaml` sudah berisi langkah deploy otomatis untuk layanan Python.
+3. Deploy sesuai konfigurasi pada `render.yaml`. Jika tersedia paket gratis, paket itu dapat dipilih; cek batas penggunaan/ketentuan penyedia sebelum menggunakannya. **Jangan memasukkan API key.**
+4. Setelah aktif, buka alamat website dari layanan Render. Web, `/health`, `/templates`, dan `/format` semuanya berada di alamat domain **yang sama**.
+5. Pastikan indikator menunjukkan **“Mesin pemroses terhubung”**. Unggah DOCX, pilih template, tekan **Proses & Download Word**.
 
-## Menyiapkan artikel
-- Masukan adalah artikel DOCX yang sudah memiliki isi, bukan konversi skripsi menjadi artikel.
-- Letakkan judul di awal. Pilih jumlah paragraf judul 1–3; judul yang membungkus menjadi beberapa baris tetapi tanpa Enter tetap satu paragraf.
-- Berikutnya nama penulis, institusi, email, dan nomor kontak bila perlu.
-- Gunakan judul bagian pada paragraf tersendiri: ABSTRACT, ABSTRAK, PENDAHULUAN, METODE PENELITIAN, HASIL DAN PEMBAHASAN, KESIMPULAN, DAFTAR PUSTAKA. Padanan bahasa Inggris dan awalan A./1. didukung.
-- Kata kunci memakai label Keywords: / Kata kunci:, dipisahkan koma atau titik koma.
-- Pendeteksian struktur bekerja pada paragraf utama. Abstrak yang berada di dalam text box atau tabel sumber perlu dipindah ke paragraf biasa terlebih dahulu; bila tidak ditemukan web menampilkan catatan.
+Perintah server jika diinstal secara manual (jalankan dari root proyek):
 
-## Batasan dan pemeriksaan
-Isi ilmiah, nama, dan teks judul tidak ditulis ulang. Aplikasi tidak menerjemahkan abstrak, tidak memangkas judul, tidak mengarang daftar pustaka, dan tidak otomatis mengubah sitasi menjadi Chicago 17 Full Footnote. Catatan validasi ditampilkan setelah unduh.
+```bash
+python -m pip install -r backend/requirements.txt
+uvicorn backend.main:app --host 0.0.0.0 --port 8000
+```
 
-Footnote asli, tabel, gambar, dan hubungan internal Word dipertahankan dengan memakai file sumber sebagai dasar. Periksa lebar gambar/tabel, pemenggalan halaman, gaya catatan kaki, serta detail sitasi pada Word. Gunakan font Book Antiqua pada komputer; aplikasi pembaca bisa menggantinya bila font tidak terpasang.
+Kemudian buka http://localhost:8000 melalui browser di komputer yang menjalankan server. `index.html` tidak perlu dibuka terpisah. Di hosting yang menyediakan variabel `$PORT`, gunakan start command di `render.yaml`.
 
-KARSA tetap memakai pemroses beta sebelumnya, dengan header sederhana dan keterbatasan layout yang sama. PDF dan pratinjau dalam web belum tersedia. Unggahan dikirim ke backend yang diisi pengguna, bukan diproses di GitHub Pages. Backend mengolah dalam memori dan belum menyediakan login, antrean, maupun pembatasan trafik.
+## Pilihan 2 — Tetap menggunakan GitHub Pages untuk tampilan web
+
+Gunakan pilihan ini hanya jika ingin halaman web tetap berada di GitHub Pages. **Butuh dua layanan:** GitHub Pages untuk tampilan dan hosting Python untuk mesin dokumen. URL Python hanya perlu diatur **sekali oleh admin**, bukan diisi mahasiswa.
+
+1. Deploy backend ke Render atau hosting Python lain menggunakan repository yang sama dan pastikan alamat seperti `https://alamat-backend-anda.onrender.com/health` mengembalikan JSON dengan `"ok": true`.
+2. Di **file `config.js` pada root repository GitHub**, ubah konfigurasi:
+
+   ```javascript
+   window.ZAINNET_CONFIG = {
+     apiBaseUrl: 'https://alamat-backend-anda.onrender.com'
+   };
+   ```
+
+   Ganti URL contoh dengan **alamat backend sebenarnya** yang Anda terima setelah deploy. Jangan menambahkan `/format`, `/templates`, atau `/health`. URL ini **bukan API key** dan aman ditampilkan sebagai alamat layanan publik.
+3. Pastikan `index.html`, `config.js`, dan `app.js` diunggah bersama pada folder yang menjadi sumber GitHub Pages. Jika GitHub Pages dikonfigurasi dari folder root, gunakan berkas root; folder `frontend/` adalah salinan untuk deploy terpisah.
+4. Atur variabel `ALLOWED_ORIGINS` pada hosting Python sesuai alamat frontend, misalnya `https://USERNAME.github.io` atau domain kustom. Bila perlu mengizinkan lebih dari satu domain, pisahkan dengan koma. Variabel ini mengendalikan CORS, bukan autentikasi.
+5. Buka website GitHub Pages. Indikator koneksi akan diperiksa otomatis dan pengguna tidak perlu memasukkan URL apa pun.
+
+**Catatan:** Bila `config.js` masih kosong di GitHub Pages, akan muncul pesan konfigurasi untuk admin karena GitHub Pages tidak bisa menjalankan Python. Situs tidak dapat memproses DOCX sampai hosting backend benar-benar aktif. Untuk mode satu hosting, **biarkan `apiBaseUrl: ''`**.
+
+## Fitur yang dipertahankan
+
+- Pemilihan KARSA, RABBANI 2023/panduan web, dan AL-IHKAM 2026.
+- Upload DOCX (maksimum 15 MB) dan hasil unduh Word DOCX.
+- Metadata publikasi opsional, pengaturan jumlah paragraf judul, serta catatan validasi.
+- Pemroses asli memakai sumber DOCX agar media, tabel, dan footnote Word tetap terjaga pada kasus yang didukung.
+- Tautan unduh muncul setelah server memproses dokumen; verifikasi tata letak akhir tetap perlu dilakukan di Word.
+
+## Fitur yang diperbaiki
+
+- Kolom **Alamat mesin pemroses (API)** dihapus dari antarmuka pengguna.
+- URL mesin pemroses menggunakan **alamat website sendiri** secara otomatis bila frontend dan backend digabung.
+- Untuk GitHub Pages, URL disimpan hanya di **`config.js`**, tidak di localStorage/browser pengguna.
+- Indikator koneksi **Terhubung / Belum terhubung** dan tombol **Coba Sambungkan Lagi**.
+- Pemeriksaan layanan `/health` dan daftar `/templates` sebelum tombol pemrosesan diaktifkan.
+- Pengecekan tipe file dan batas ukuran file sebelum mengunggah.
+- Pesan gagal yang lebih jelas; pilihan template diambil dari backend.
+- `render.yaml` untuk deploy satu hosting; endpoint root `/` dan aset JS dilayani oleh FastAPI.
 
 ## Pengujian
-Dari root proyek: pip install httpx lalu python -m unittest discover -s tests -v
-Pengujian mencakup daftar template, keluaran KARSA/RABBANI, kedua profil Rabbani, validasi permintaan, akses catatan melalui CORS, serta keberlangsungan byte footnote/media asli.
+
+```bash
+python -m pip install -r backend/requirements.txt
+python -m pip install httpx
+python -m unittest discover -s tests -v
+```
+
+Pengujian backend meliputi pemformatan dan detail layout ketiga jurnal, footnote/media, validasi file, CORS, serta akses halaman web/JS dari backend yang sama.
+
+## Batasan yang belum berubah
+
+Ini masih versi **beta**, bukan engine desain jurnal yang telah lulus verifikasi identik di semua jenis artikel. Header, pagination, tabel/gambar panjang, footnote, dan sitasi tertentu mungkin memerlukan pemeriksaan manual di Microsoft Word. Sistem belum menyiapkan PDF, login, antrean pengunjung, perlindungan terhadap penyalahgunaan layanan publik, ataupun penyimpanan arsip. Layanan hosting gratis dapat memiliki pembatasan sumber daya dan kondisi idle. Jika dipakai untuk mahasiswa dalam jumlah besar, gunakan hosting dengan kapasitas memadai dan tambahkan rate limit serta autentikasi sesuai kebutuhan.
