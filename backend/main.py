@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
@@ -19,6 +19,19 @@ ROOT=Path(__file__).resolve().parent.parent
 app=FastAPI(title='ZAIN.NET Article Formatter — Beta')
 origins=[s.strip() for s in os.getenv('ALLOWED_ORIGINS','*').split(',')]
 app.add_middleware(CORSMiddleware,allow_origins=origins,allow_methods=['GET','POST'],allow_headers=['*'],expose_headers=['X-Format-Warnings','Content-Disposition'])
+
+# Satu hosting: FastAPI juga melayani halaman web. Tidak perlu URL API di UI.
+@app.get('/', include_in_schema=False)
+def homepage():
+    return FileResponse(ROOT/'index.html', media_type='text/html')
+
+@app.get('/app.js', include_in_schema=False)
+def app_js():
+    return FileResponse(ROOT/'app.js', media_type='application/javascript')
+
+@app.get('/config.js', include_in_schema=False)
+def config_js():
+    return FileResponse(ROOT/'config.js', media_type='application/javascript')
 
 @app.get('/health')
 def health(): return {'ok':True,'mode':'beta','warning':'Format kompleks perlu validasi visual'}
