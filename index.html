@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#153966">
-<title>ZAIN.NET v5 — 15 Template Jurnal Asli</title>
+<title>ZAIN.NET v6 — 15 Template Jurnal Asli</title>
 <style>
 :root{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;background:#f3f6fa;color:#182c42;--accent:#1657a1;--soft:#eaf2fb;--border:#dce5ee;--muted:#5f7184}*{box-sizing:border-box}body{margin:0}a{color:var(--accent)}
 header{background:linear-gradient(115deg,#102d52,#1b5484);color:white;padding:28px 20px 26px}header .inner{max-width:1100px;margin:auto}.brand{font-size:27px;font-weight:850;letter-spacing:.4px}.subtitle{margin:5px 0 0;font-size:14px;opacity:.94}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{border:1px solid #a7c2dd;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:650}
@@ -19,7 +19,7 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
 <body>
 <header><div class="inner">
   <div class="brand">ZAIN.NET</div><p class="subtitle">Multi Template Artikel — memakai file DOCX jurnal asli sebagai kerangka dokumen</p>
-  <div class="chips"><span class="chip">15 Jurnal</span><span class="chip">v5.0 · RABBANI Ditambahkan</span><span class="chip">100% GitHub Pages</span><span class="chip">Tanpa backend / API</span><span class="chip">Pemrosesan lokal di browser</span></div>
+  <div class="chips"><span class="chip">15 Jurnal</span><span class="chip">v6.0 · Perbaikan DOCX untuk Word Lama</span><span class="chip">100% GitHub Pages</span><span class="chip">Tanpa backend / API</span><span class="chip">Pemrosesan lokal di browser</span></div>
 </div></header>
 <main>
 <div class="columns">
@@ -27,6 +27,7 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
 <div class="panel">
   <h1>Format artikel jurnal</h1>
   <p class="muted">Unggah artikel Word, pilih jurnal, kemudian download hasil DOCX. Logo dan tata letak pembuka berasal dari file template Word jurnal, bukan gambar atau CSS tiruan.</p>
+  <div class="hint"><strong>Perbaikan v6:</strong> struktur pengaturan DOCX kini dinormalisasi untuk mengurangi kegagalan baca di Word 2010. Kompatibilitas Word 2010 tetap harus diuji pada komputer Anda.</div>
   <div class="hint"><strong>Mode Template Asli</strong> — identitas jurnal, logo, header/footer, tabel abstrak dan gaya dokumen awal dipertahankan semampunya. Isi artikel diambil dari Word Anda.</div>
   <label for="journal">1. Pilih jurnal</label>
   <select id="journal"><option value="">Memuat jurnal…</option></select>
@@ -68,8 +69,8 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
 </div>
 </aside>
 </div>
-<footer>ZAIN.NET v5.0 · Browser-only DOCX formatter · Semua pemrosesan dilakukan di perangkat Anda · Tidak memerlukan URL Python</footer>
+<footer>ZAIN.NET v6.0 · Browser-only DOCX formatter · Semua pemrosesan dilakukan di perangkat Anda · Tidak memerlukan URL Python</footer>
 </main>
-<script src="lib/jszip.min.js"></script><script src="js/docx-engine.js"></script><script src="js/app.js"></script>
+<script src="lib/jszip.min.js?v=6.0"></script><script src="js/docx-engine.js?v=6.0-wordfix"></script><script src="js/app.js?v=6.0-wordfix"></script>
 </body>
 </html>

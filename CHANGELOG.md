@@ -1,15 +1,10 @@
-# Perubahan
+# ZAIN.NET v6.0 — Perbaikan kompatibilitas DOCX
 
-## v5.0 — Tambah RABBANI New 2023
-
-- Jumlah jurnal dari 14 menjadi **15**.
-- Berkas DOCX asli RABBANI ditambahkan tanpa perubahan di `templates/rabbani/original.docx`.
-- Mapping judul, penulis, afiliasi, email, nomor WA, abstrak dua bahasa, kata kunci dan riwayat artikel yang ditempatkan pada shape di halaman pertama.
-- Judul contoh yang terbagi di dua paragraf kini diisi sesuai judul mahasiswa.
-- Teks header dinamis diperbarui, logo tetap dari template asli, footer dan PAGE field dipertahankan.
-- Volume, nomor, DOI dan tanggal terbit **contoh 2020** dibersihkan dan diganti dengan data resmi saja bila ada.
-- Mekanisme dua kolom mengalir disediakan ketika abstrak atau kata kunci terlalu panjang untuk shape asli.
-- Metadata tambahan: DOI, volume, nomor terbitan, bulan/tahun terbit, dan WhatsApp.
-- Regresi satu artikel untuk 15/15 jurnal berhasil. Uji tiga skenario RABBANI (normal, judul panjang, metadata resmi) dan satu skenario abstrak singkat dilakukan; render visual pakai LibreOffice.
-
-**Masih beta:** tidak ada klaim 100% identik dengan tata letak Word 2010 atau terverifikasi memenuhi seluruh aturan jurnal. Rujukan audit 14 jurnal sebelumnya tetap dalam `AUDIT_14_JURNAL.md`.
+- Memperbaiki urutan properti OOXML (`w:pPr`, `w:rPr`, `w:tblPr`, `w:tcPr`) untuk file hasil **semua 15 jurnal**. V5 menulis properti tidak sesuai urutan standar.
+- Pada contoh RABBANI v5 terdapat 26 pelanggaran urutan (16 paragraph, 9 run, 1 tabel); setelah koreksi menjadi 0.
+- Menangani properti bawaan di `word/footer*.xml` dan `word/numbering.xml` pada template hasil konversi .doc lama.
+- MIME DOCX diatur benar dan asset JavaScript diberi cache-buster agar GitHub Pages memakai kode baru.
+- 30 pengujian pembuatan DOCX (15 template × 2 skenario): berhasil.
+- 30 pemeriksaan ZIP CRC, XML, relasi part, dan pembukaan python-docx: berhasil.
+- 15 uji konversi hasil ke PDF LibreOffice: berhasil.
+- **Belum diuji langsung di Microsoft Word 2010**; hindari klaim kompatibilitas 100% sampai diverifikasi pada PC pengguna.

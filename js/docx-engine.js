@@ -585,6 +585,45 @@ async function safeguardHeaderFooter(tplZip,rule,meta){
  }
  return changed;
 }
+// Word 2010 compatibility: properties MUST be in the OOXML schema order.
+// LibreOffice often accepts out-of-order properties, but legacy Word can reject
+// or crash on them. The original template is untouched; only the generated
+// result is normalized. Unknown extension nodes retain their original slots.
+const PROPERTY_ORDER={
+ pPr:'pStyle keepNext keepLines pageBreakBefore framePr widowControl numPr suppressLineNumbers pBdr shd tabs suppressAutoHyphens kinsoku wordWrap overflowPunct topLinePunct autoSpaceDE autoSpaceDN bidi adjustRightInd snapToGrid spacing ind contextualSpacing mirrorIndents suppressOverlap jc textDirection textAlignment textboxTightWrap outlineLvl divId cnfStyle rPr sectPr pPrChange',
+ rPr:'rStyle rFonts b bCs i iCs caps smallCaps strike dstrike outline shadow emboss imprint noProof snapToGrid vanish webHidden color spacing w kern position sz szCs highlight u effect bdr shd fitText vertAlign rtl cs em lang eastAsianLayout specVanish oMath',
+ tblPr:'tblStyle tblpPr tblOverlap bidiVisual tblStyleRowBandSize tblStyleColBandSize tblW jc tblCellSpacing tblInd tblBorders shd tblLayout tblCellMar tblLook tblCaption tblDescription tblPrChange',
+ tcPr:'cnfStyle tcW gridSpan hMerge vMerge tcBorders shd noWrap tcMar textDirection tcFitText vAlign hideMark headers cellIns cellDel cellMerge tcPrChange'
+};
+function normalizePropertyOrder(doc){
+ let changed=0;
+ for(const [tag,list] of Object.entries(PROPERTY_ORDER)){
+  const priority=new Map(list.split(' ').map((name,index)=>[name,index]));
+  for(const parent of get(doc,tag)){
+   const original=Array.from(parent.childNodes);
+   const applicable=n=>n.nodeType===1&&n.namespaceURI===NS.w&&priority.has(n.localName);
+   const toSort=original.filter(applicable);
+   let prev=-1,bad=false;
+   for(const n of toSort){const pos=priority.get(n.localName);if(pos<prev){bad=true;break;}prev=pos;}
+   if(!bad)continue;
+   const sorted=toSort.slice().sort((a,b)=>priority.get(a.localName)-priority.get(b.localName));
+   let ix=0;const reordered=original.map(n=>applicable(n)?sorted[ix++]:n);
+   for(const n of reordered)parent.appendChild(n);
+   changed++;
+  }
+ }
+ return changed;
+}
+async function normalizeOtherWordParts(zip){
+ let fixed=0;
+ const targets=Object.keys(zip.files).filter(k=>/^word\/(?!document\.xml$)[^/]*\.xml$/i.test(k));
+ for(const name of targets){
+  const file=zip.file(name);if(!file)continue;
+  const raw=await file.async('string'),doc=parse(raw),n=normalizePropertyOrder(doc);
+  if(n){zip.file(name,serialize(doc));fixed+=n;}
+ }
+ return fixed;
+}
 function sourceStylesUsed(nodes){const styles=new Set();for(const n of nodes)for(const z of get(n,'pStyle'))if(aval(z,'val'))styles.add(aval(z,'val'));return [...styles];}
 async function build(articleBuffer,templateBuffer,rule,metadata={}){
  if(typeof global.JSZip==='undefined')throw Error('JSZip tidak dimuat; pastikan folder lib/ ikut diunggah ke GitHub.');
@@ -608,8 +647,10 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  const deps=await importSourceParts(srcZip,tplZip,tplDoc,srcDoc,{inserted:appended,sourceRelationshipIds:sourceRefIds(appended)},warnings);
  const headers=await editJournalHeader(tplZip,tplDoc,info,rule,warnings);
  const footerFixes=(await safeguardHeaderFooter(tplZip,rule,metadata))+(rule.id==='rabbani'?await scrubRabbaniHeaderFooter(tplZip,info,metadata):0);
+ const propertyOrderFixes=normalizePropertyOrder(tplDoc);
  tplZip.file('word/document.xml',serialize(tplDoc));
- const blob=await tplZip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+ const otherPartOrderFixes=await normalizeOtherWordParts(tplZip);
+ const blob=await tplZip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',compression:'DEFLATE',compressionOptions:{level:6}});
  const absEnWords=sliceCount(info.abstractEn),absIdWords=sliceCount(info.abstractId);
  if(rule.abstractWords){for(const [lang,n] of [['Inggris',absEnWords],['Indonesia',absIdWords]]){
   if(n && (n<rule.abstractWords[0]||n>rule.abstractWords[1]))warnings.push('Abstrak '+lang+' '+n+' kata, pedoman '+rule.abstractWords[0]+'–'+rule.abstractWords[1]+' kata.');
@@ -623,7 +664,7 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  if(rule.id==='rabbani')warnings.push('RABBANI: tanggal penerbitan, volume, nomor jurnal, DOI dan jumlah halaman terbit berasal dari penerbit, bukan data mahasiswa. Elemen contoh dinetralkan; periksa penempatan abstrak dalam Word.');
  warnings.push('Volume/nomor/tahun/DOI contoh dari template mungkin belum diterbitkan; editor wajib memverifikasi dan melengkapinya sebelum pengiriman.');
  if(headers<Object.keys(rule.header||{}).length)warnings.push('Sebagian running header tidak terpetakan secara otomatis; cek semua halaman di Word.');
- return {blob,details:{journal:rule.id,templateBased:true,frontFields:frontCount,contentBlocks:imported,sourceTables:extracted.tables,sourceFootnotes:extracted.hasNotes,sourceAssets:deps.assets,sourceRelationships:deps.relationships,headersModified:headers,footerFixes,warnings:[...new Set(warnings)],extracted:{title:info.title,author:info.author,affiliation:info.affiliation,email:info.email,abstractEnWords:absEnWords,abstractIdWords:absIdWords}}};
+ return {blob,details:{journal:rule.id,templateBased:true,frontFields:frontCount,contentBlocks:imported,sourceTables:extracted.tables,sourceFootnotes:extracted.hasNotes,sourceAssets:deps.assets,sourceRelationships:deps.relationships,headersModified:headers,footerFixes,propertyOrderFixes,otherPartOrderFixes,warnings:[...new Set(warnings)],extracted:{title:info.title,author:info.author,affiliation:info.affiliation,email:info.email,abstractEnWords:absEnWords,abstractIdWords:absIdWords}}};
 }
 global.ZainDocxEngine={build};
 })(typeof window!=='undefined'?window:globalThis);

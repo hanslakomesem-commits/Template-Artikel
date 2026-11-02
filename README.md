@@ -1,3 +1,11 @@
+# Perbaikan kompatibilitas Word 2010 — v6
+
+**Peringatan:** Microsoft Word 2010 tidak tersedia untuk pengujian otomatis dalam lingkungan ini. Perbaikan mencegah satu kelas masalah XML yang terukur, tetapi belum menjamin Word 2010 tidak akan crash karena add-in, font, atau masalah Office lokal.
+
+Pada v5 ditemukan 26 kelompok properti Word dengan urutan XML tidak sesuai schema pada hasil RABBANI; dokumen asli 0. Versi ini menormalisasi `w:pPr`, `w:rPr`, `w:tblPr`, `w:tcPr` sebelum DOCX diunduh. Perbaikan berlaku ke semua 15 jurnal.
+
+Jika Word 2010 masih crash, gunakan dokumen pemulihan yang telah disimpan ulang lewat LibreOffice (tersedia terpisah) dan coba Word dalam safe mode (`winword /safe`).
+
 # ZAIN.NET Multi Template Artikel — GitHub Pages Only v5.0
 
 **15 jurnal, termasuk RABBANI NEW 2023. Tanpa Python backend, API key, Supabase, ataupun server pemroses.**
