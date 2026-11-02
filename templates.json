@@ -6,7 +6,7 @@
     "source_format": "docx",
     "original": "templates/karsa/template.docx",
     "docx": "templates/karsa/template.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "auto_supported": true
   },
   {
@@ -16,7 +16,7 @@
     "source_format": "docx",
     "original": "templates/sociale/original.docx",
     "docx": "templates/sociale/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -27,7 +27,7 @@
     "source_format": "docx",
     "original": "templates/perdikan/original.docx",
     "docx": "templates/perdikan/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -38,7 +38,7 @@
     "source_format": "docx",
     "original": "templates/panyonara/original.docx",
     "docx": "templates/panyonara/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -49,7 +49,7 @@
     "source_format": "docx",
     "original": "templates/mabny/original.docx",
     "docx": "templates/mabny/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -60,7 +60,7 @@
     "source_format": "docx",
     "original": "templates/meyarsa/original.docx",
     "docx": "templates/meyarsa/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -71,7 +71,7 @@
     "source_format": "docx",
     "original": "templates/kiddo/original.docx",
     "docx": "templates/kiddo/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -82,7 +82,7 @@
     "source_format": "docx",
     "original": "templates/elnubuwwah/original.docx",
     "docx": "templates/elnubuwwah/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -93,7 +93,7 @@
     "source_format": "docx",
     "original": "templates/ghancaran/original.docx",
     "docx": "templates/ghancaran/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -104,7 +104,7 @@
     "source_format": "docx",
     "original": "templates/alhuquq/original.docx",
     "docx": "templates/alhuquq/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -115,7 +115,7 @@
     "source_format": "docx",
     "original": "templates/shafin/original.docx",
     "docx": "templates/shafin/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "asli",
     "auto_supported": true
   },
@@ -126,7 +126,7 @@
     "source_format": "doc",
     "original": "templates/nuansa/original.doc",
     "docx": "templates/nuansa/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "konversi DOC ke DOCX; verifikasi visual diperlukan",
     "auto_supported": true
   },
@@ -137,7 +137,7 @@
     "source_format": "doc",
     "original": "templates/enasa/original.doc",
     "docx": "templates/enasa/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "konversi DOC ke DOCX; verifikasi visual diperlukan",
     "auto_supported": true
   },
@@ -148,7 +148,7 @@
     "source_format": "doc",
     "original": "templates/iqtishadia/original.doc",
     "docx": "templates/iqtishadia/original.docx",
-    "auto": "format dasar beta",
+    "auto": "template-first beta",
     "status": "konversi DOC ke DOCX; verifikasi visual diperlukan",
     "auto_supported": true
   }

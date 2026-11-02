@@ -1,0 +1,100 @@
+{
+  "karsa": {
+    "journal": "KARSA",
+    "original_file": "templates/karsa/template.docx",
+    "sha256_original": "9ba5ab4b74c654a3d2982ab0f9ec6c30339ea77a29f20c83acd2f395ebff71ef",
+    "processing_docx": "templates/karsa/template.docx",
+    "year": "rujukan lama"
+  },
+  "sociale": {
+    "journal": "SOCIALE",
+    "original_file": "templates/sociale/original.docx",
+    "sha256_original": "0a84481172554e5ba623d3be938e385181852f4205afa8b86e9f33cd85b412fa",
+    "processing_docx": "templates/sociale/original.docx",
+    "year": "2026"
+  },
+  "perdikan": {
+    "journal": "PERDIKAN",
+    "original_file": "templates/perdikan/original.docx",
+    "sha256_original": "946ba45ccd31589f0dfde7017e8b96e147d6e70c48c4ea8d6bff28fddcc64e38",
+    "processing_docx": "templates/perdikan/original.docx",
+    "year": "2026"
+  },
+  "panyonara": {
+    "journal": "PANYONARA",
+    "original_file": "templates/panyonara/original.docx",
+    "sha256_original": "57ec5db3b8c61e5493c1a2d4c6a2b4127c66b4ad0666fde11b4260061ec13f7f",
+    "processing_docx": "templates/panyonara/original.docx",
+    "year": "2025"
+  },
+  "mabny": {
+    "journal": "MABNY",
+    "original_file": "templates/mabny/original.docx",
+    "sha256_original": "4284198a9a5366aa53b29acbe2078cabbc6fcfde10d08201bec2551b24ed7573",
+    "processing_docx": "templates/mabny/original.docx",
+    "year": "2025"
+  },
+  "meyarsa": {
+    "journal": "MEYARSA",
+    "original_file": "templates/meyarsa/original.docx",
+    "sha256_original": "5468a37747e55a2c69971cd7d7817d2bf27225098257d091b3b786a3e85fff52",
+    "processing_docx": "templates/meyarsa/original.docx",
+    "year": "2023"
+  },
+  "kiddo": {
+    "journal": "KIDDO",
+    "original_file": "templates/kiddo/original.docx",
+    "sha256_original": "1620b033cc08fecfb95e74760b23b5b343ee182bfde50c267fea5baf9efad6c4",
+    "processing_docx": "templates/kiddo/original.docx",
+    "year": "versi pada file"
+  },
+  "elnubuwwah": {
+    "journal": "El Nubuwwah",
+    "original_file": "templates/elnubuwwah/original.docx",
+    "sha256_original": "9fa462b7e82107dd49146ed6f103643673ba840e0c7d7e674d8c70cab7fcfb87",
+    "processing_docx": "templates/elnubuwwah/original.docx",
+    "year": "2026"
+  },
+  "ghancaran": {
+    "journal": "GHANCARAN",
+    "original_file": "templates/ghancaran/original.docx",
+    "sha256_original": "8f37eedecbc957cce55ac36fbc09b7439cd0a5ca369e86a8f76376a399586340",
+    "processing_docx": "templates/ghancaran/original.docx",
+    "year": "2026"
+  },
+  "alhuquq": {
+    "journal": "Al-Huquq",
+    "original_file": "templates/alhuquq/original.docx",
+    "sha256_original": "fd8793010827d8a9606e31232123f22f66c268aa2905f0a35f9230f85770259d",
+    "processing_docx": "templates/alhuquq/original.docx",
+    "year": "2019"
+  },
+  "shafin": {
+    "journal": "SHAFIN",
+    "original_file": "templates/shafin/original.docx",
+    "sha256_original": "0c890e6d3c8297f876cf2b56dccb7d783e3fd604e1a7e0e30a49b0eb77fec43f",
+    "processing_docx": "templates/shafin/original.docx",
+    "year": "2024"
+  },
+  "nuansa": {
+    "journal": "NUANSA",
+    "original_file": "templates/nuansa/original.doc",
+    "sha256_original": "0608343957b63680ee38b5e7504b053464903f8d332a5d0ae591af3be48d1dac",
+    "processing_docx": "templates/nuansa/original.docx",
+    "year": "2021"
+  },
+  "enasa": {
+    "journal": "E-NASA",
+    "original_file": "templates/enasa/original.doc",
+    "sha256_original": "81721113001aa1f0bbf579f410ca90cb8b2285b8a5b4bece6a8322630daba55c",
+    "processing_docx": "templates/enasa/original.docx",
+    "year": "tidak tercantum"
+  },
+  "iqtishadia": {
+    "journal": "IQTISHADIA",
+    "original_file": "templates/iqtishadia/original.doc",
+    "sha256_original": "11a50b20f57f59e68e0a82494bf1ae395b79c7b11199da7a1c2d6da507f3281c",
+    "processing_docx": "templates/iqtishadia/original.docx",
+    "year": "2025"
+  }
+}

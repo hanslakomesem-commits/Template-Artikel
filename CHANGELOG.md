@@ -1,10 +1,12 @@
 # Changelog
 
-## 2026-11-02 — GitHub Pages Only
-- Menghapus folder `backend/`, URL backend Python HTTPS, dan ketergantungan deployment API.
-- Menggunakan engine OOXML berbasis JSZip yang berjalan di browser.
-- Mendukung pemformatan **dasar** untuk 14 template, dengan opsi impor header/footer eksperimental.
-- Menyertakan file `.doc` asli serta hasil konversi `.docx` bagi NUANSA, E-NASA, dan IQTISHADIA.
-- Mempertahankan native footnotes pada file artikel yang diproses.
-- Mempertahankan download semua file template asli dari GitHub Pages.
-- Menambahkan disclaimer yang eksplisit untuk format penerbit jurnal yang kompleks.
+## v3.1 — 2 November 2026
+- Mesin ulang total: template-first DOCX, bukan menyalin font dan margin saja.
+- Identitas, logo, tabel abstrak dan header/footer jurnal asli tetap berasal dari Word asli.
+- Impor konten dari artikel, native Word footnote, gambar, tabel dan relasinya.
+- Tambah aturan spesifik untuk 14 jurnal.
+- Penomoran asli dipertahankan, running header KARSA diperbarui.
+- Contoh tanggal Received/Accepted/Published dibersihkan dari footer KARSA.
+- Adaptasi ukuran judul NUANSA untuk kotak judul berukuran tetap.
+- Resize gambar yang terlalu besar dan tabel yang melampaui lebar teks.
+- Seluruh proses lokal di browser, tanpa backend.

@@ -1,33 +1,75 @@
 <!doctype html>
 <html lang="id">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#132b49"><title>ZAIN.NET | Multi Template Jurnal — GitHub Only</title>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#153966">
+<title>ZAIN.NET — Format Artikel Berdasarkan 14 Template Jurnal Asli</title>
 <style>
-:root{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f2f6fb;color:#182b42;font-synthesis:none}*{box-sizing:border-box}body{margin:0}h1,h2,h3,p{margin-top:0}p{line-height:1.6}.wrap{max-width:1100px;padding:0 20px;margin:auto}
-header{background:linear-gradient(120deg,#10233e,#19558b);color:white;padding:32px 0 48px}header h1{font-size:clamp(25px,4vw,35px);letter-spacing:-.7px;margin-bottom:8px}.sub{max-width:760px;color:#dae6f3}.pill{background:#dbf8e9;color:#116541;font-size:12px;padding:6px 10px;border-radius:99px;font-weight:700;display:inline-block;margin-bottom:12px}
-.container{margin-top:-22px;padding-bottom:46px}.box{background:white;border:1px solid #dee6f0;border-radius:16px;box-shadow:0 5px 19px rgba(20,43,70,.05);padding:24px;margin-bottom:20px}.headrow{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
-h2{font-size:21px;margin-bottom:12px}h3{font-size:16px;margin-bottom:5px}.muted,.mini{color:#627389}.mini{font-size:13px}label{display:block;font-size:14px;font-weight:700;margin:16px 0 7px}select,input[type=file],input[type=search]{width:100%;padding:12px;font:inherit;background:white;color:#182b42;border:1px solid #c6d2df;border-radius:10px}input[type=checkbox]{accent-color:#1856a1;width:17px;height:17px;flex-shrink:0}.buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}button,.button{padding:12px 18px;background:#1860ac;color:white;border:0;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center}button:hover,.button:hover{background:#104d8b}button:disabled{opacity:.5;cursor:wait}.outline{background:white!important;color:#185294!important;border:1px solid #bacce1!important}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px}.journal-card{border:1px solid #dce6f0;border-radius:12px;padding:16px;min-height:155px;display:flex;flex-direction:column}.journal-card h3{margin:0}.journal-card .mini{margin:9px 0;flex-grow:1}.card-actions{display:flex;gap:7px;flex-wrap:wrap}.small-link{font-size:12px;font-weight:700;color:#1858a1;text-decoration:none;padding:9px 10px;border-radius:8px;background:#eaf2fd;border:0;cursor:pointer}.small-link.subtle{color:#44576f;background:#edf0f5}.small-link.outline{color:#2863a0!important;border:1px solid #bfd0e2!important;background:white!important}.small-tag{font-size:11px;color:#79879a}.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:7px;margin:14px 0}.checks label{display:flex;align-items:flex-start;gap:8px;font-size:13px;font-weight:500;margin:0;background:#f6f8fb;border-radius:8px;padding:12px}.caution{border-left:4px solid #e7a33c;background:#fff8e9;border-radius:7px;padding:13px 15px;color:#5b4726;font-size:13px;margin:14px 0;line-height:1.55}#status{border-radius:8px;padding:12px 14px;background:#eef3f9;color:#34516f;line-height:1.5;margin-top:14px;white-space:pre-wrap;font-size:13px}#status[data-kind=success]{background:#e9f7ef;color:#186c42}#status[data-kind=error]{background:#fff0ee;color:#a33936}.link{font-size:14px;color:#155b9f;font-weight:700;text-decoration:none}footer{font-size:12px;text-align:center;color:#6d7b8e;padding-bottom:25px}
-@media(max-width:620px){header{padding:25px 0 45px}.wrap{padding:0 14px}.box{padding:17px}.buttons>*{width:100%}.headrow{display:block}.grid{grid-template-columns:1fr}}
-</style></head>
+:root{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;background:#f3f6fa;color:#182c42;--accent:#1657a1;--soft:#eaf2fb;--border:#dce5ee;--muted:#5f7184}*{box-sizing:border-box}body{margin:0}a{color:var(--accent)}
+header{background:linear-gradient(115deg,#102d52,#1b5484);color:white;padding:28px 20px 26px}header .inner{max-width:1100px;margin:auto}.brand{font-size:27px;font-weight:850;letter-spacing:.4px}.subtitle{margin:5px 0 0;font-size:14px;opacity:.94}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{border:1px solid #a7c2dd;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:650}
+main{max-width:1100px;margin:25px auto 45px;padding:0 17px}.columns{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(310px,.82fr);gap:20px;align-items:start}@media(max-width:810px){.columns{grid-template-columns:1fr}}
+.panel{background:white;border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:0 6px 22px #20385108;margin-bottom:20px}h1{font-size:21px;margin:0 0 8px}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 8px}.muted{color:var(--muted);font-size:13px;line-height:1.6;margin:4px 0 14px}
+label{display:block;font-size:13px;font-weight:750;margin:13px 0 7px}input:not([type=file]),select,textarea{width:100%;border:1px solid #b9cadb;border-radius:9px;padding:11px 12px;background:white;color:#102c4b;font:inherit;font-size:14px}input[type=file]{width:100%;padding:12px;border:1px dashed #8badcf;border-radius:10px;background:#f7faff;font-size:13px}input:focus,select:focus,textarea:focus{outline:2px solid #7aa9e5;outline-offset:1px}textarea{min-height:65px;resize:vertical}
+button,.button{background:var(--accent);color:white;border:none;border-radius:10px;padding:13px 18px;font:inherit;font-size:14px;font-weight:750;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:8px}button:disabled{opacity:.56;cursor:wait}.button.subtle{background:#e8f0f8;color:#154b84}.wide{width:100%}.small{font-size:12px;padding:9px 11px}.hint{background:var(--soft);padding:12px 14px;border-radius:9px;font-size:12px;line-height:1.55;color:#1e527d}.warn{background:#fff6e7;border-left:3px solid #dd9c2b;padding:11px 12px;border-radius:6px;font-size:12px;line-height:1.6}
+#progress{font-size:13px;margin-top:16px;padding:13px;border-radius:9px;background:#f1f6fc;white-space:pre-wrap;line-height:1.6;display:none}#progress[data-kind=error]{background:#fff0ef;color:#a42a2b}#progress[data-kind=success]{background:#ecf8ee;color:#1c6531}
+#details{display:none;margin-top:13px;padding:14px;border:1px solid #d5e4d9;border-radius:9px}#details ul{margin:10px 0 0;padding-left:18px;font-size:12px;line-height:1.65}details{margin-top:18px;border:1px solid var(--border);border-radius:10px;padding:12px}summary{cursor:pointer;font-weight:700;font-size:13px}fieldset{border:0;padding:0;margin:8px 0}fieldset .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:540px){fieldset .split{grid-template-columns:1fr}}
+#list{display:grid;gap:10px;max-height:690px;overflow:auto}article.journal{border:1px solid var(--border);padding:13px;border-radius:12px}article.journal.selected{border-color:#629ad4;background:#f7fafe}.jtop{display:flex;justify-content:space-between;align-items:start;gap:10px}.tag{font-size:11px;border-radius:6px;padding:4px 8px;background:#edf1f7;color:#536b84;white-space:nowrap}.btnrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.searchrow{display:flex;align-items:center;gap:8px;margin:15px 0}.searchrow input{flex:1}footer{text-align:center;font-size:12px;color:#6e7f91;margin-top:32px}#rules{border-left:3px solid #6fa0d1;padding-left:11px;font-size:13px;color:#496178;margin:12px 0}
+</style>
+</head>
 <body>
-<header><div class="wrap"><div class="pill">GitHub Pages Only • Tanpa backend • Pemrosesan lokal</div><h1>ZAIN.NET Multi Template Artikel</h1><p class="sub">Upload artikel Word, pilih jurnal, lalu download hasil pemformatan dasar secara langsung. Tidak menggunakan server Python, API key, atau URL backend.</p></div></header>
-<main class="wrap container">
-<section class="box" aria-labelledby="formatter"><div class="headrow"><h2 id="formatter">Format artikel Word</h2><span class="mini">Hasil DOCX dapat diedit di Microsoft Word</span></div>
-<div class="caution"><strong>Versi beta:</strong> hasil otomatis menerapkan ukuran halaman, margin, font dan spasi utama sesuai profil jurnal. Desain kompleks (logo di badan artikel, tabel abstrak, header ganjil/genap, footnote khusus) <strong>belum dijamin identik</strong> dengan template resmi. Simpan berkas asli dan periksa hasil sebelum digunakan.</div>
-<label for="file">1. Upload artikel mahasiswa (.docx)</label><input type="file" id="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-<label for="journal">2. Pilih template jurnal</label><select id="journal"></select>
-<p class="mini" id="templateInfo"></p><a class="link" id="chosenOriginal" download>Download template asli yang dipilih</a>
-<label>3. Opsi pemformatan</label><div class="checks">
-<label><input type="checkbox" id="justify" checked><span>Ratakan paragraf isi kiri-kanan (justify)</span></label>
-<label><input type="checkbox" id="indent" checked><span>Indentasi paragraf sesuai profil dasar</span></label>
-<label><input type="checkbox" id="branding"><span>Eksperimental: salin header/footer dari template (termasuk logo jika terdapat di header)</span></label>
-<label><input type="checkbox" id="pageNumber"><span>Eksperimental: nomor halaman otomatis di footer (jika template belum memiliki)</span></label>
+<header><div class="inner">
+  <div class="brand">ZAIN.NET</div><p class="subtitle">Multi Template Artikel — memakai file DOCX jurnal asli sebagai kerangka dokumen</p>
+  <div class="chips"><span class="chip">14 Jurnal</span><span class="chip">100% GitHub Pages</span><span class="chip">Tanpa backend / API</span><span class="chip">Pemrosesan lokal di browser</span></div>
+</div></header>
+<main>
+<div class="columns">
+<section>
+<div class="panel">
+  <h1>Format artikel jurnal</h1>
+  <p class="muted">Unggah artikel Word, pilih jurnal, kemudian download hasil DOCX. Logo dan tata letak pembuka berasal dari file template Word jurnal, bukan gambar atau CSS tiruan.</p>
+  <div class="hint"><strong>Mode Template Asli</strong> — identitas jurnal, logo, header/footer, tabel abstrak dan gaya dokumen awal dipertahankan semampunya. Isi artikel diambil dari Word Anda.</div>
+  <label for="journal">1. Pilih jurnal</label>
+  <select id="journal"><option value="">Memuat jurnal…</option></select>
+  <div id="rules" role="note">Memuat aturan jurnal…</div>
+  <a id="originalLink" href="#" download class="button subtle small">Unduh DOCX template asli</a>
+  <label for="file">2. Unggah artikel mahasiswa (.docx)</label>
+  <input id="file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+  <p class="muted">File tidak dikirim ke server. Maksimum yang disarankan: 25 MB. Artikel harus memiliki heading Pendahuluan/Introduction agar isi dapat dideteksi.</p>
+  <details id="meta"><summary>3. Perbaiki identitas artikel secara manual (opsional)</summary>
+    <p class="muted">Biarkan kosong untuk deteksi otomatis. Jika metadata salah terbaca, isi bagian yang tepat.</p>
+    <label for="title">Judul artikel</label><textarea id="title" rows="2" placeholder="Jika deteksi judul kurang tepat"></textarea>
+    <label for="author">Nama penulis</label><input id="author" placeholder="Nama penulis / beberapa nama dipisahkan koma">
+    <label for="affiliation">Afiliasi penulis</label><input id="affiliation" placeholder="Program Studi / Fakultas / Universitas">
+    <label for="email">Email korespondensi</label><input id="email" type="email" placeholder="email@kampus.ac.id">
+    <details><summary>Abstrak dan kata kunci (opsional)</summary>
+      <label for="abstractId">Abstrak Bahasa Indonesia</label><textarea id="abstractId" rows="4" placeholder="Biarkan kosong untuk membaca dari artikel"></textarea>
+      <label for="keywordsId">Kata Kunci</label><input id="keywordsId" placeholder="kata 1; kata 2; kata 3">
+      <label for="abstractEn">Abstract English</label><textarea id="abstractEn" rows="4" placeholder="Biarkan kosong untuk membaca dari artikel"></textarea>
+      <label for="keywordsEn">Keywords</label><input id="keywordsEn" placeholder="keyword 1; keyword 2; keyword 3">
+    </details>
+    <details><summary>Tanggal proses penerbitan (hanya jika resmi)</summary>
+      <p class="muted">Jangan masukkan tanggal dari contoh jurnal. Biarkan kosong bila belum diterbitkan.</p>
+      <fieldset><div class="split"><div><label for="received">Received</label><input id="received" placeholder="—"></div><div><label for="revised">Revised</label><input id="revised" placeholder="—"></div><div><label for="accepted">Accepted</label><input id="accepted" placeholder="—"></div><div><label for="published">Published</label><input id="published" placeholder="—"></div></div></fieldset>
+    </details>
+  </details>
+  <button id="start" type="button" class="wide" style="margin-top:18px">4. Proses dan Download Word (.docx)</button>
+  <div id="progress" role="status" aria-live="polite"></div>
+  <div id="details"><h3>Ringkasan pemrosesan</h3><div id="stat"></div><ul id="warnings"></ul></div>
 </div>
-<div class="buttons"><button id="start" type="button">Proses &amp; Download DOCX</button></div>
-<div id="status" role="status" aria-live="polite">Semua proses dilakukan di browser. Artikel Anda tidak diunggah ke server ZAIN.NET.</div>
+<div class="panel"><h2>Hal yang perlu diperiksa</h2>
+  <div class="warn">Pemformatan otomatis **belum menjamin 100% kesesuaian** dengan aturan penerbit. Khususnya: panjang abstrak, struktur abstrak wajib, DOI/volume, header teks panjang, pergantian halaman, dan penempatan tabel/gambar/footnote. Harap buka hasil di Microsoft Word sebelum dicetak atau dikirim jurnal.</div>
+  <p class="muted" style="margin-top:14px">Jika Word menampilkan banyak garis titik dan kotak, aktifkan <b>Home → ¶ Show/Hide</b> untuk memeriksa batas paragraf/bingkai dari template asli.</p>
+</div>
 </section>
-<section class="box" aria-labelledby="catalog-title"><div class="headrow"><div><h2 id="catalog-title">Template Word asli yang disertakan</h2><p class="mini" id="catalogIntro">Memuat daftar jurnal…</p></div><div id="count" class="mini"></div></div>
-<label for="filter">Cari nama jurnal</label><input id="filter" type="search" placeholder="Misal: KARSA, PERDIKAN, SHAFIN"><div style="height:18px"></div><div class="grid" id="catalog"></div></section>
-<section class="box"><h2>Penting sebelum dipakai</h2><p class="mini">Template Word asli tetap disertakan tanpa perubahan. Versi .doc tersedia pula dalam bentuk konversi .docx untuk keperluan pemrosesan browser. Sistem menjaga isi dan objek artikel asli, tetapi pengaturan layout setelah diproses dapat mengubah pembagian halaman. Jika jurnal membutuhkan kesesuaian penuh, edit artikel langsung pada template DOCX aslinya menggunakan Microsoft Word.</p><p class="mini">PDF dapat dibuat melalui fitur <b>Save As PDF</b> di Word/LibreOffice setelah mengecek tata letak. Tidak ada tombol PDF otomatis agar aplikasi tidak memberi hasil PDF yang berpotensi berbeda dari Word.</p></section>
-</main><footer>ZAIN.NET · HTML + JavaScript + JSZip (dipaketkan lokal) · GitHub Pages tanpa backend Python</footer>
-<script src="lib/jszip.min.js"></script><script src="js/engine.js"></script><script src="js/app.js"></script>
-</body></html>
+<aside>
+<div class="panel"><h2>14 template asli</h2><p class="muted" id="count">Memuat katalog…</p>
+  <div class="searchrow"><input id="filter" placeholder="Cari jurnal (KARSA, SHAFIN, dll)" aria-label="Cari jurnal"></div>
+  <div id="list"></div>
+</div>
+</aside>
+</div>
+<footer>ZAIN.NET · Browser-only DOCX formatter · Semua pemrosesan dilakukan di perangkat Anda · Tidak memerlukan URL Python</footer>
+</main>
+<script src="lib/jszip.min.js"></script><script src="js/docx-engine.js"></script><script src="js/app.js"></script>
+</body>
+</html>

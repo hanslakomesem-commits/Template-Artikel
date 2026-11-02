@@ -1,56 +1,46 @@
 (function(){
 'use strict';
-const $=id=>document.getElementById(id);
-const state={items:[],profiles:{},busy:false};
-function fmt(n){return (n/1024/1024).toFixed(2)+' MB'}
-function msg(text,kind='info'){$('status').textContent=text;$('status').dataset.kind=kind}
-function safeFilename(text){return text.normalize('NFD').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,50)}
-function save(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
-function href(path){return path.split('/').map(s=>encodeURIComponent(s)).join('/')}
-function make(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}
-function updateFilter(){const q=$('filter').value.toLowerCase().trim();$('catalog').replaceChildren();let count=0;
- for(const p of state.items.filter(i=>i.name.toLowerCase().includes(q))){count++;
-  const card=make('article','journal-card'),badge=make('span','small-tag',p.year||''),title=make('h3','',p.name),subtitle=make('p','mini',p.docx&&p.docx!==p.original?'Asli .doc + konversi .docx':'Template Word asli');
-  const row=make('div','card-actions'),a=make('a','small-link','Download asli');a.href=href(p.original);a.download='';row.appendChild(a);
-  if(p.docx && p.docx!==p.original){const b=make('a','small-link subtle','DOCX konversi');b.href=href(p.docx);b.download='';row.appendChild(b)}
-  const choose=make('button','small-link outline','Pilih AUTO dasar');choose.type='button';choose.addEventListener('click',()=>{$('journal').value=p.id;window.scrollTo({top:0,behavior:'smooth'});$('file').focus()});row.appendChild(choose);
-  card.append(title,badge,subtitle,row);$('catalog').appendChild(card);
+const $=n=>document.getElementById(n),state={templates:[],rules:{},busy:false};
+function status(s,kind='info'){$('progress').style.display='block';$('progress').dataset.kind=kind;$('progress').textContent=s;}
+function safe(s){return (s||'artikel').normalize('NFD').replace(/[^a-zA-Z0-9-]+/g,'_').replace(/^_+|_+$/g,'').slice(0,48);}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
+function path(p){return p.split('/').map(x=>encodeURIComponent(x)).join('/');}
+function element(tag,className,text){const e=document.createElement(tag);if(className)e.className=className;if(text!==undefined)e.textContent=text;return e;}
+function select(){const t=state.templates.find(x=>x.id===$('journal').value),r=t&&state.rules[t.id];if(!r)return;
+ $('rules').textContent='Aturan utama: '+r.bodyFont+' '+r.bodySize+' pt, spasi '+r.line+'. '+r.note;
+ $('originalLink').href=path(t.original);$('originalLink').download='';list();}
+function list(){const q=$('filter').value.toLocaleLowerCase('id');$('list').replaceChildren();let n=0;
+ for(const t of state.templates.filter(t=>t.name.toLocaleLowerCase('id').includes(q))){n++;
+  const article=element('article','journal'+(t.id===$('journal').value?' selected':''));
+  const heading=element('div','jtop'),h=element('h3','',t.name),badge=element('span','tag',t.year||'DOCX');heading.append(h,badge);
+  const row=element('div','btnrow'),use=element('button','small','Pilih jurnal');use.type='button';use.addEventListener('click',()=>{$('journal').value=t.id;select();window.scrollTo({top:0,behavior:'smooth'})});
+  const a=element('a','button subtle small','Unduh asli');a.href=path(t.original);a.download='';row.append(use,a);
+  if(t.docx&&t.docx!==t.original){const b=element('a','button subtle small','DOCX konversi');b.href=path(t.docx);b.download='';row.append(b)}
+  article.append(heading,row);$('list').append(article);
  }
- $('count').textContent=count+' dari '+state.items.length+' jurnal';
-}
-function updateSelection(){const i=state.items.find(i=>i.id===$('journal').value);if(!i)return;
- $('templateInfo').textContent='Acuan: '+i.name+' · '+(i.year||'')+'. AUTO dasar menyesuaikan ukuran kertas, margin, dan tipografi. Tidak menjamin tata letak sama persis.';
- $('chosenOriginal').href=href(i.original);$('chosenOriginal').download='';
-}
-async function start(){
- try{
-  const [items,profiles]=await Promise.all([fetch('templates.json').then(r=>{if(!r.ok)throw Error('templates.json tidak ditemukan');return r.json()}),fetch('profiles.json').then(r=>{if(!r.ok)throw Error('profiles.json tidak ditemukan');return r.json()})]);
-  state.items=items;state.profiles=profiles;
-  $('journal').replaceChildren();for(const item of items){const op=new Option(item.name,item.id);$('journal').append(op)}
-  $('journal').value='karsa';updateSelection();updateFilter();
-  $('catalogIntro').textContent=items.length+' jurnal tersedia · template asli dapat diunduh';
- }catch(e){msg('Gagal memuat daftar template: '+e.message,'error')}
-}
-$('filter').addEventListener('input',updateFilter);
-$('journal').addEventListener('change',updateSelection);
+ $('count').textContent=n+' dari '+state.templates.length+' jurnal';}
+function metadata(){return Object.fromEntries(['title','author','affiliation','email','abstractId','abstractEn','keywordsId','keywordsEn','received','revised','accepted','published'].map(k=>[k,$(k)?.value.trim()||'']));}
 $('start').addEventListener('click',async()=>{
- const input=$('file').files[0],selected=state.items.find(i=>i.id===$('journal').value);
  if(state.busy)return;
- if(!input||!/\.docx$/i.test(input.name)){msg('Pilih file artikel dalam format .docx (bukan .doc atau PDF).','error');return}
- if(!selected||!selected.docx){msg('Template DOCX tidak ditemukan.','error');return}
- if(input.size>35*1024*1024){msg('Ukuran artikel melebihi batas 35 MB untuk proses browser.','error');return}
- state.busy=true;$('start').disabled=true;
+ const file=$('file').files?.[0],t=state.templates.find(x=>x.id===$('journal').value);
+ if(!t){status('Pilih jurnal terlebih dahulu.','error');return}
+ if(!file||!/\.docx$/i.test(file.name)){status('Pilih artikel Word .docx (bukan PDF/.doc).','error');return}
+ if(file.size>25*1024*1024){status('File lebih dari 25 MB. Untuk stabilitas browser, kecilkan ukuran Word terlebih dahulu.','error');return}
+ state.busy=true;$('start').disabled=true;$('details').style.display='none';
  try{
-  msg('Membaca artikel dan template Word di browser…','info');
-  const res=await fetch(href(selected.docx));if(!res.ok)throw Error('Template tidak dapat diunduh (HTTP '+res.status+').');
-  const tpl=await res.arrayBuffer();const article=await input.arrayBuffer();
-  const opts={justify:$('justify').checked,indent:$('indent').checked,headerFooter:$('branding').checked,pageNumbers:$('pageNumber').checked};
-  msg('Menerapkan ukuran halaman, margin, font dan aturan dasar…','info');
-  const output=await window.ZainDocxEngine.build(article,tpl,state.profiles[selected.id],opts);
-  save(output.blob,'ZAINNET_'+safeFilename(selected.id)+'_'+safeFilename(input.name.replace(/\.docx$/i,''))+'_BETA.docx');
-  const d=output.details;
-  msg('Berhasil: DOCX dasar sudah dibuat dan diunduh ('+fmt(output.blob.size)+'). '+d.formattedRuns+' bagian teks disesuaikan, '+d.headersFooters+' komponen header/footer disalin. Periksa hasil di Microsoft Word sebelum dicetak/dikirim jurnal.','success');
- }catch(e){msg('Tidak dapat memproses artikel: '+e.message,'error');console.error(e)}finally{state.busy=false;$('start').disabled=false}
+  status('Membaca artikel dan template jurnal asli di browser…');
+  const response=await fetch(path(t.docx));if(!response.ok)throw Error('Template '+t.id+' gagal dimuat (HTTP '+response.status+').');
+  const [article,template]=await Promise.all([file.arrayBuffer(),response.arrayBuffer()]);
+  status('Mengisi identitas, abstrak, dan isi artikel pada struktur Word jurnal…');
+  const output=await ZainDocxEngine.build(article,template,state.rules[t.id],metadata());
+  download(output.blob,'ZAINNET_'+safe(t.id)+'_'+safe(file.name.replace(/\.docx$/i,''))+'_TEMPLATE_ASLI.docx');
+  const d=output.details;status('Berhasil membuat DOCX ('+(output.blob.size/1024/1024).toFixed(2)+' MB) dari template '+t.name+'. Periksa hasil di Word sebelum digunakan.','success');
+  $('stat').textContent='Identitas diisi: '+d.frontFields+' slot · Bagian isi: '+d.contentBlocks+' blok · Tabel sumber: '+d.sourceTables+' · Relasi aset sumber: '+d.sourceAssets+' · Catatan kaki asli: '+(d.sourceFootnotes?'terdeteksi':'tidak ditemukan')+'.';
+  $('warnings').replaceChildren();for(const warning of d.warnings){const li=element('li','',warning);$('warnings').appendChild(li)}$('details').style.display='block';
+ }catch(e){console.error(e);status('Gagal memproses: '+e.message,'error')}finally{state.busy=false;$('start').disabled=false}
 });
-start();
+$('journal').addEventListener('change',select);$('filter').addEventListener('input',list);
+Promise.all([fetch('templates.json').then(r=>{if(!r.ok)throw Error('templates.json gagal');return r.json()}),fetch('rules.json').then(r=>{if(!r.ok)throw Error('rules.json gagal');return r.json()})])
+.then(([items,rules])=>{state.templates=items;state.rules=rules;$('journal').replaceChildren();for(const i of items)$('journal').add(new Option(i.name,i.id));$('journal').value='karsa';select()})
+.catch(e=>status('Website gagal memuat daftar template. Pastikan semua isi ZIP diunggah dengan struktur folder yang benar: '+e.message,'error'));
 })();

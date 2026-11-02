@@ -1,58 +1,79 @@
-# ZAIN.NET Multi Template Artikel — GitHub Pages Only
+# ZAIN.NET MULTI TEMPLATE ARTIKEL — GitHub Pages Only, v3.1 (2 November 2026)
 
-**Rilis:** 2 November 2026. **Tidak menggunakan backend Python, API, database, atau layanan eksternal.**
+**TIDAK PERLU URL BACKEND PYTHON, RENDER, SUPABASE, ATAU API KEY.**
 
-## Apa yang sudah tersedia
+## Yang benar-benar dibuat
 
-- Web mobile-friendly di `index.html`.
-- **14 pilihan jurnal**: KARSA, SOCIALE, PERDIKAN, PANYONARA, MABNY, MEYARSA, KIDDO, El Nubuwwah, GHANCARAN, Al-Huquq, SHAFIN, NUANSA, E-NASA, IQTISHADIA.
-- Semua template Word **disimpan dalam bentuk file yang sama persis** dengan berkas aslinya. Dokumen `.doc` juga memiliki versi `.docx` hasil konversi. Konversi belum divalidasi identik secara visual.
-- Pencarian katalog dan download setiap template asli.
-- Upload artikel mahasiswa dalam bentuk `.docx` dan pemrosesan di browser melalui `js/engine.js` + JSZip yang tersedia secara lokal pada folder `lib/`.
-- **AUTO DASAR (beta)** untuk seluruh 14 jurnal: mengubah ukuran halaman, margin, font, ukuran huruf, spasi, dan beberapa gaya judul/abstrak/heading sesuai profil yang tersedia. Isi artikel Word tetap menjadi dokumen sumber sehingga native footnote, gambar, dan tabel tidak sengaja dibuang.
-- Opsi eksperimental: menyalin sebagian header/footer resmi dari paket template, dan menambahkan nomor halaman otomatis. **Opsi ini dinonaktifkan secara default** karena belum selalu sesuai tata letak.
-- Download DOCX hasil yang tetap dapat diedit.
+1. Website HTML/CSS responsif, bisa digunakan dari HP/komputer lewat GitHub Pages.
+2. 14 jurnal: 13 jurnal baru dari unggahan pengguna dan KARSA dari file asli yang pernah diunggah.
+3. DOCX jurnal **asli sebagai dasar Word hasil**, bukan mengarang logo, meniru tampilan dengan CSS, atau sekadar mengambil ukuran margin. Identitas penerbit, logo, tabel abstrak, header/footer, watermark dan bentuk awal template disimpan.
+4. Mesin JavaScript `js/docx-engine.js` membaca artikel mahasiswa, mendeteksi judul/penulis/abstrak/kata kunci dan mengganti teks contoh di posisi spesifik template (`rules.json`).
+5. Isi artikel mulai Pendahuluan/Introduction diimpor ke dokumen jurnal; footnote Word asli, tabel, gambar dan relasi media ikut dipindahkan. Gambar lebar dikecilkan bila lebih lebar dari area teks.
+6. Hasil diunduh sebagai **Word DOCX** yang bisa diedit. **Tidak ada ekspor PDF otomatis di browser**; untuk PDF buka DOCX di Word lalu `Save As → PDF`.
+7. Metadata identitas artikel, abstrak, dan tanggal editorial bisa diisi manual jika otomatis salah mendeteksi. Tanggal contoh artikel terbit tidak diterapkan sebagai tanggal artikel pengguna.
+8. Deteksi peringatan: judul terlalu panjang, abstrak keluar dari rentang jumlah kata, abstrak dua bahasa tidak ada, struktur abstrak MABNY belum lengkap.
 
-### Penting: batasan format
+## Cara mengganti aplikasi lama di GitHub
 
-Pemformatan AUTO ini **bukan pengganti layout Word asli** dan tidak boleh disebut "100% sesuai jurnal". Hal yang memerlukan pemeriksaan/manual: logo yang diletakkan di body (bukan header), tabel abstrak multi-kolom, running header penulis/judul pada halaman ganjil/genap, kotak tanggal redaksi, footer, footnote rumit, page breaks, kolom, daftar pustaka, dan pencetakan PDF. Tidak ada auto-PDF agar tidak menghasilkan PDF berbeda dari Microsoft Word. Cara paling aman untuk jurnal resmi adalah mengedit teks di file template asli.
+Repository yang sebelumnya digunakan adalah:
+`https://github.com/hanslakomesem-commits/Template-Artikel`
 
-**Template berisi contoh** (tanggal, volume, DOI, nama penulis) yang bukan data mahasiswa. Jika memilih impor header/footer secara eksperimental, pastikan semua placeholder/contoh redaksi tidak terbawa sebagai data nyata. Khusus kotak tanggal publikasi pada footer, mesin mengganti contoh tanggal dengan tanda kosong `—` jika pola tanggal diketahui.
-
-## Cara instalasi di GitHub Pages
-
-1. Download file ZIP dan **ekstrak**.
-2. Buat repository GitHub, contohnya `zainnet-multi-template`.
-3. Upload **isi folder ZIP**, bukan folder pembungkusnya; pastikan file `index.html` di ROOT repository dan folder `js/`, `lib/`, `templates/` ikut diunggah.
-4. GitHub repository → **Settings → Pages → Build and deployment → Deploy from a branch**.
-5. Pilih branch `main`, folder `/ (root)`, lalu **Save**.
-6. Setelah GitHub Pages aktif, buka `https://USERNAME.github.io/zainnet-multi-template/` (ganti USERNAME).
-7. Pilih artikel `.docx`, jurnal, lalu klik **Proses & Download DOCX**.
-
-**Tidak ada kolom URL backend**. Tidak ada file backend di paket. Hanya file statis yang dihosting GitHub.
-
-## Struktur
+1. **Ekstrak file ZIP** ini di komputer.
+2. Buka repository GitHub lalu pastikan branch `main`.
+3. Pilih `Add file` → `Upload files` atau gunakan Git di komputer.
+4. **Unggah seluruh isi folder hasil ekstrak**, bukan ZIP dan bukan folder induknya. Di root repository harus tampak:
 
 ```
-index.html                UI web responsif
-js/app.js                 UI / upload / download / validasi
-js/engine.js              Engine OpenXML di browser
-lib/jszip.min.js          Dependensi lokal JSZip (MIT/GPLv3 dual licensed)
-templates.json            Katalog 14 jurnal
-profiles.json             Profil tata letak dasar (beta)
-templates/<id>/...        Berkas asli dan, jika perlu, hasil konversi DOCX
+Template-Artikel/
+├── index.html
+├── templates.json
+├── rules.json
+├── js/
+│   ├── app.js
+│   └── docx-engine.js
+├── lib/
+│   ├── jszip.min.js
+│   └── JSZIP_LICENSE.md
+└── templates/
+    ├── karsa/template.docx
+    ├── perdikan/original.docx
+    ├── sociale/original.docx
+    └── ... 11 jurnal lain
 ```
 
-## Cara kerja dan privasi
+5. Pilih **Commit changes**. Pastikan `index.html` lama benar-benar diganti.
+6. Di `Settings → Pages`, gunakan branch `main`, folder `/(root)` untuk workflow "Deploy from a branch"; jika sudah memakai GitHub Actions, pastikan deploy berhasil.
+7. Setelah indikator deploy hijau, buka `https://hanslakomesem-commits.github.io/Template-Artikel/` dan tekan `Ctrl + Shift + R`. Pada halaman baru seharusnya terlihat **14 jurnal**, tulisan **Template Asli**, dan **tidak ada kolom URL backend**.
+8. Folder lawas `backend`, `frontend`, dan folder jurnal yang terlanjur berada di root dapat dibiarkan dahulu. Setelah versi baru berjalan, bersihkan bila perlu.
 
-File input diproses menggunakan `File.arrayBuffer()` dalam memori browser. Browser mengambil file template Word dari repository Pages dan membuka keduanya lewat JSZip. Artikel pengguna **tidak dikirim ke server pihak lain** oleh kode ini; output dibuat sebagai `Blob` dan diunduh lokal. Pengguna tetap harus memercayai sumber website dan browser yang digunakan. Tidak ada tracking/upload jaringan untuk artikel di kode yang disertakan.
+## Alur pemrosesan
 
-## Standar kualitas dan pengujian
+- Artikel pengguna **tidak diunggah ke server**. Browser mengunduh template statis dari GitHub Pages, lalu membaca Word yang dipilih dan menyusun hasil menggunakan JavaScript/JSZip di perangkat pengguna.
+- `rules.json` memuat peta slot asli untuk setiap jurnal, termasuk bidang dalam tabel. Jika penerbit mengubah template, peta indeks perlu diperbarui.
+- Untuk memulai, pilih jurnal, pilih file `.docx`, kemudian klik **Proses dan Download Word**.
+- Jika nama, abstrak, atau afiliasi terdeteksi keliru, buka menu **Perbaiki identitas artikel secara manual**.
 
-Pengujian fungsional dilakukan dengan artikel DOCX Anggara Putra Pratama dari percakapan pengguna. Seluruh 14 profil berhasil menghasilkan DOCX secara programatis, dapat dibuka dengan `python-docx`, dan bagian `word/footnotes.xml` dari artikel tetap dipertahankan. Tiga output contoh juga berhasil dikonversi melalui LibreOffice ke PDF. **Ini bukan sertifikasi kesesuaian visual** dengan template jurnal; pengujian browser end-to-end tidak dapat dijalankan pada lingkungan uji karena browser menolak membuka alamat lokal.
+## Batasan penting (WAJIB DIBACA)
 
-Batas ukuran upload yang disarankan di UI adalah 35 MB. Pada perangkat bermemori rendah, DOCX besar dapat membuat browser lambat atau kehabisan memori. Berkas `.doc` lama untuk input artikel harus dikonversi ke `.docx` terlebih dahulu.
+- **Tidak ada jaminan format identik 100% atau otomatis lulus pemeriksaan editor.** Jurnal memakai banyak pengaturan DOCX rumit: text box, frame, section, header ganjil-genap, spasi persis, tabel asimetris, watermark, dan variasi Word.
+- Dokumen keluaran **harus diperiksa di Microsoft Word**, terutama halaman pertama/kedua, logo, tabel abstrak, gambar, nomor halaman, footnote, daftar pustaka dan tanggal metadata.
+- Template **MABNY** memakai kolom/bingkai kompleks dan membutuhkan **abstrak terstruktur** (Purpose, Methodology, Findings, Implications, Originality). Aplikasi tidak boleh mengarang elemen abstrak yang tidak ada di artikel asal. Perlu pengecekan layout manual.
+- Template **NUANSA** menggunakan kotak judul dengan tinggi terbatas. Untuk judul panjang, mesin menurunkan ukuran font supaya judul tidak terpotong, sekaligus memberikan peringatan untuk memendekkan judul mengikuti batas jurnal.
+- Sebagian template berasal dari tahun **2019–2026**; tanggal, volume, edisi, DOI, dan identitas contoh dalam template belum tentu sesuai edisi penerbit saat ini. Jangan menganggap tanggal contoh sebagai data mahasiswa.
+- Kualitas ekspor PDF secara langsung dari browser tidak bisa disamakan dengan Microsoft Word. Gunakan `Save As PDF` di Word atau LibreOffice setelah mengedit.
+- Aplikasi memerlukan koneksi untuk membuka GitHub Pages dan mengambil file template saat pertama kali dipilih; **tidak** memerlukan server yang memproses dokumen.
 
-## Memperluas hingga 30 jurnal
+## Lisensi dan file asli
 
-Taruh file template jurnal baru di `templates/<slug>/original.docx`, tambah entri pada `templates.json` serta profil pada `profiles.json`. Jangan menganggap template baru sudah sesuai otomatis sebelum pengujian struktur dan layout masing-masing selesai. Saat ini ada **14 jurnal**, bukan 30 jurnal lengkap.
+Kode kustom ZAIN.NET ditulis untuk proyek ini. `lib/jszip.min.js` adalah dependensi pihak ketiga dan lisensinya ada di `lib/JSZIP_LICENSE.md`. File template jurnal tetap berhak cipta penerbit/pembuat masing-masing dan sebaiknya dipakai sesuai izin mereka. Berkas DOC asli dan konversi DOCX yang tersedia tetap disertakan.
+
+## Perubahan source code
+
+- `index.html`: UI format artikel, manual metadata, katalog 14 jurnal.
+- `js/app.js`: kontrol upload/pilih/unduh dan tampilan laporan.
+- `js/docx-engine.js`: pengganti total mesin lama; template-first dan OOXML media/footnote importer.
+- `rules.json`: pemetaan lokasi judul, abstrak, penulis, isi, style tiap jurnal.
+- `templates.json`: manifest seluruh Word yang disimpan.
+- `TEMPLATE_MANIFEST_SHA256.json`: checksums untuk melacak orisinalitas berkas.
+
+Lihat `PENGUJIAN.md` untuk rincian hasil QA.
