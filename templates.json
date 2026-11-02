@@ -151,5 +151,16 @@
     "auto": "template-first beta",
     "status": "konversi DOC ke DOCX; verifikasi visual diperlukan",
     "auto_supported": true
+  },
+  {
+    "id": "rabbani",
+    "name": "RABBANI: Jurnal Pendidikan Agama Islam",
+    "year": "DOCX New 2023 (contoh Vol. 1, 2020)",
+    "source_format": "docx",
+    "original": "templates/rabbani/original.docx",
+    "docx": "templates/rabbani/original.docx",
+    "auto": "template-first beta",
+    "auto_supported": true,
+    "status": "Berkas Word asli dari pengguna; revisi penerbitan/DOI membutuhkan metadata resmi"
   }
 ]

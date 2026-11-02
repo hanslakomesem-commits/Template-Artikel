@@ -19,7 +19,7 @@ function list(){const q=$('filter').value.toLocaleLowerCase('id');$('list').repl
   article.append(heading,row);$('list').append(article);
  }
  $('count').textContent=n+' dari '+state.templates.length+' jurnal';}
-function metadata(){return Object.fromEntries(['title','author','affiliation','email','abstractId','abstractEn','keywordsId','keywordsEn','received','revised','accepted','published'].map(k=>[k,$(k)?.value.trim()||'']));}
+function metadata(){return Object.fromEntries(['title','author','affiliation','email','abstractId','abstractEn','keywordsId','keywordsEn','phone','doi','volume','issue','publicationDate','received','revised','accepted','published'].map(k=>[k,$(k)?.value.trim()||'']));}
 $('start').addEventListener('click',async()=>{
  if(state.busy)return;
  const file=$('file').files?.[0],t=state.templates.find(x=>x.id===$('journal').value);

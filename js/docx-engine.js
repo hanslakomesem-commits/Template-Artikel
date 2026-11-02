@@ -61,6 +61,18 @@ function shortTitle(title,max=52){
  for(const word of words){if((out.join(' ')+(out.length?' ':'')+word).length>max-2)break;out.push(word)}
  return (out.length?out.join(' '):s.slice(0,Math.max(18,max-3)).replace(/\s+\S*$/,''))+'…';
 }
+function splitJournalTitle(title,maxChars=65){
+ const s=titleFriendly(title).replace(/\s+/g,' ').trim();
+ if(s.length<=maxChars)return [s,''];
+ const words=s.split(' '),mid=s.length/2;let best=1,bestScore=1e9,acc='';
+ for(let i=0;i<words.length-1;i++){
+  acc+=(i?' ':'')+words[i];
+  // Prefer similar-width lines; avoid an excessively wide first line.
+  const score=Math.abs(acc.length-mid)+(acc.length>maxChars?50:0);
+  if(score<bestScore){bestScore=score;best=i+1;}
+ }
+ return [words.slice(0,best).join(' '),words.slice(best).join(' ')];
+}
 function displayAuthor(text){
  const s=(text||'').replace(/\s+/g,' ').trim();
  if(!s)return '';
@@ -118,7 +130,8 @@ function unifyMeta(info,meta){const out={...info};
 function valueOf(slot,info,meta,warnings,rule){
  const en=info.abstractEn||'',id=info.abstractId||'';
  const ke=info.keywordsEn||info.keywordsId||'',ki=info.keywordsId||info.keywordsEn||'';
- const vals={title:titleFriendly(info.title),shortTitle:shortTitle(info.title,52),author:displayAuthor(info.author),affiliation:info.affiliation,email:info.email,
+ const [titleLine1,titleLine2]=splitJournalTitle(info.title,65);
+ const vals={title:titleFriendly(info.title),titleLine1,titleLine2,shortTitle:shortTitle(info.title,52),author:displayAuthor(info.author),affiliation:info.affiliation,email:info.email,phoneLabel:'Nomor WA yang bisa dihubungi: '+(meta?.phone||'—'),
  abstractEn:en,abstractId:id,abstractIdBrackets:id?'['+id+']':'',abstractEnLabel:en?'Abstract: '+en:'Abstract: —',
  abstractEnPrefix:en?'ABSTRACT  '+en:'ABSTRACT',keywordsEn:ke,keywordsId:ki,
  keywordsEnLabel:ke?'Keywords: '+ke:'Keywords: —',dateReceived:'Received: '+(meta?.received||'—'),
@@ -132,11 +145,35 @@ function valueOf(slot,info,meta,warnings,rule){
  if(slot==='abstractIdBrackets'&&!id){warnings.push('Abstrak Bahasa Indonesia belum tersedia.');return '';}
  return vals[slot]===undefined?String(meta?.[slot]||''):String(vals[slot]||'');
 }
+function replaceRabbaniFront(p,value,size){
+ // The publisher's example puts superscript indices and blue font instructions
+ // in separate runs. Replace the example with a clean normal text run while
+ // preserving its original centered paragraph position.
+ const d=p.ownerDocument,oldRuns=[...children(p,'r')];
+ for(const r of oldRuns)p.removeChild(r);
+ for(const hl of children(p,'hyperlink'))p.removeChild(hl);
+ const r=make(d,'r'),rPr=make(d,'rPr');
+ const font=make(d,'rFonts');for(const k of ['ascii','hAnsi','cs','eastAsia'])attr(font,k,'Book Antiqua');rPr.appendChild(font);
+ const sz=make(d,'sz'),szCs=make(d,'szCs');attr(sz,'val',size*2);attr(szCs,'val',size*2);rPr.appendChild(sz);rPr.appendChild(szCs);
+ rPr.appendChild(make(d,'b'));
+ const t=make(d,'t');t.setAttributeNS(NS.xml,'xml:space','preserve');t.textContent=String(value||'');
+ r.appendChild(rPr);r.appendChild(t);p.appendChild(r);
+}
+function locateNestedP(doc,bodyIndex,nestedIndex){
+ const p=locateP(doc,bodyIndex);
+ return p?get(p,'p')[Number(nestedIndex)]||null:null;
+}
 function replaceFront(tDoc,rule,info,meta,warnings){
  let filled=0,missing=[];
  for(const [idx,slot] of Object.entries(rule.fields||{})){
   const p=locateP(tDoc,idx);
   if(!p){missing.push('p'+idx);continue;}
+  if(rule.id==='rabbani' && ['1','2','4','5','6'].includes(idx))replaceRabbaniFront(p,valueOf(slot,info,meta,warnings,rule),['1','2'].includes(idx)?13:idx==='4'?11:10);
+  else replaceText(p,valueOf(slot,info,meta,warnings,rule));filled++;
+ }
+ for(const [bi,pi,slot] of rule.textboxes||[]){
+  const p=locateNestedP(tDoc,bi,pi);
+  if(!p){missing.push('box'+bi+'/'+pi);continue;}
   replaceText(p,valueOf(slot,info,meta,warnings,rule));filled++;
  }
  for(const [bi,ri,ci,pi,slot] of rule.table||[]){
@@ -396,7 +433,7 @@ function headerTextMatchesRule(s,key,rule){
  if(!s||s.length>260)return false;
  const blacklist=/^(?:DOI|ISSN|Vol\.|Journal Homepage|E-ISSN|P-ISSN)/i;
  if(blacklist.test(s))return false;
- if(key==='author'||key==='authorShort')return /author|penulis|nama lengkap|indah susilowati|dewi astin|name|hazim|sulistowati|sulisowati|mohammad/i.test(s);
+ if(key==='author'||key==='authorShort')return /author|penulis|nama lengkap|indah susilowati|dewi astin|rahmat dandi|name|hazim|sulistowati|sulisowati|mohammad/i.test(s);
  if(key==='shortTitle')return /title|judul|historical and religious|article tittle|article title|persepsi|artikel/i.test(s);
  return true;
 }
@@ -423,6 +460,53 @@ async function editJournalHeader(tplZip,templateDoc,info,rule,warnings){
  }
  return count;
 }
+function rabbaniFlowLongAbstract(tDoc,info,meta,rule,warnings){
+ if(rule.id!=='rabbani')return false;
+ const words=sliceCount(info.abstractEn)+sliceCount(info.abstractId);
+ const keywordChars=(info.keywordsEn||info.keywordsId||'').length;
+ if(words<=215 && keywordChars<=43)return false;
+ const d=tDoc,body=getBody(d),els=bodyEls(d),original=els[9];
+ if(!original||original.localName!=='p')return false;
+ // The PDF-like anchored boxes in the official DOCX are fixed height and
+ // silently clip longer student abstracts. A native Word table can flow.
+ const width=availablePageWidth(d),left=Math.round(width*.62),right=width-left;
+ const create=(node,name,attributes={})=>{const z=make(d,name);for(const [k,v] of Object.entries(attributes))attr(z,k,v);node.appendChild(z);return z;};
+ const tbl=make(d,'tbl');const props=create(tbl,'tblPr');
+ create(props,'tblW',{w:width,type:'dxa'});
+ const lay=create(props,'tblLayout',{type:'fixed'});
+ const borders=create(props,'tblBorders');
+ for(const side of ['top','left','bottom','right','insideH','insideV'])create(borders,side,{val:'single',sz:5,color:'00A6D6'});
+ const grid=create(tbl,'tblGrid');create(grid,'gridCol',{w:left});create(grid,'gridCol',{w:right});
+ const row=create(tbl,'tr');
+ function cell(w,shading){
+  const tc=create(row,'tc'),pr=create(tc,'tcPr');create(pr,'tcW',{w,type:'dxa'});
+  if(shading)create(pr,'shd',{fill:shading,val:'clear'});
+  const margins=create(pr,'tcMar');for(const x of ['top','left','bottom','right'])create(margins,x,{w:x==='left'||x==='right'?115:70,type:'dxa'});
+  return tc;
+ }
+ function para(c,value,bold,size=11){
+  const p=make(d,'p'),pp=create(p,'pPr');create(pp,'jc',{val:(bold||c===c2)?'left':'both'});
+  const sp=create(pp,'spacing',{before:bold?140:0,after:bold?80:140,line:240,lineRule:'auto'});
+  const r=create(p,'r'),rp=create(r,'rPr');create(rp,'rFonts',{ascii:'Book Antiqua',hAnsi:'Book Antiqua',cs:'Book Antiqua'});
+  create(rp,'sz',{val:size*2});if(bold)create(rp,'b');
+  const t=create(r,'t');t.setAttributeNS(NS.xml,'xml:space','preserve');t.textContent=value||'—';
+  c.appendChild(p);return p;
+ }
+ const c1=cell(left,'D5F5FA'),c2=cell(right,null);
+ para(c1,'ABSTRACT',true);para(c1,info.abstractEn||'—',false);
+ para(c1,'ABSTRAK',true);para(c1,info.abstractId||'—',false);
+ para(c2,'ARTICLE HISTORY',true);
+ para(c2,'Received: '+(meta?.received||'—'),false,10);
+ para(c2,'Revised: '+(meta?.revised||'—'),false,10);
+ para(c2,'Accepted: '+(meta?.accepted||'—'),false,10);
+ para(c2,'KEYWORDS',true);
+ para(c2,info.keywordsEn||info.keywordsId||'—',false,10);
+ body.insertBefore(tbl,original);
+ // Remove original anchored shapes and their spacer paragraphs, not the real article.
+ for(let i=9;i<33;i++)if(els[i]?.parentNode===body)body.removeChild(els[i]);
+ warnings.push('RABBANI: kotak teks Word asli tidak cukup fleksibel untuk abstrak '+words+' kata / kata kunci '+keywordChars+' karakter. Sistem memakai tabel Word dua kolom yang dapat mengalir ke halaman berikutnya agar teks tidak terpotong. Periksa hasil visual.');
+ return true;
+}
 function safeEditorDates(tplZip,tDoc,rule,meta){
  // Scrub the author-guideline demonstration dates (NEVER copy them to a new student article).
  function cleanDate(p){
@@ -443,6 +527,29 @@ function safeEditorDates(tplZip,tDoc,rule,meta){
  }
  for(const p of get(getBody(tDoc),'p'))cleanDate(p);
  return cleanDate;
+}
+async function scrubRabbaniHeaderFooter(tplZip,info,meta){
+ if(!info)return 0;
+ const author=displayAuthor(info.author)||'—';
+ const vol=meta?.volume||'—',issue=meta?.issue||'—',issueDate=meta?.publicationDate||'—';
+ const doi=meta?.doi||'—';
+ const history='Received: '+(meta?.received||'—')+' | Revised: '+(meta?.revised||'—')+' | Accepted: '+(meta?.accepted||'—');
+ let changed=0;
+ for(const path of Object.keys(tplZip.files).filter(k=>/^word\/(?:header|footer)[^/]*\.xml$/.test(k))){
+  const d=parse(await tplZip.file(path).async('string'));let dirty=false;
+  for(const t of get(d,'t')){
+   const orig=t.textContent||'';let s=orig;
+   if(/^DOI:\s*https?:\/\/doi\.org\/10\.19105\/rjpai\.v1i1\.3002/i.test(s))s='DOI: '+doi;
+   if(/^Volume 1, Nomor 1, Maret 2020/i.test(s))s='Volume '+vol+', Nomor '+issue+', '+issueDate;
+   if(/^Vol\. 1, No\. 1, Maret 2020/i.test(s))s='Vol. '+vol+', No. '+issue+', '+issueDate;
+   if(/^© \(2020\) Rahmat Dandi/i.test(s))s='© (—) '+author;
+   if(/^Received: 11 Januari 2020.*Accepted: 15 Maret 2020/i.test(s))s=history;
+   if(/^Pages: 1-20/i.test(s))s='Pages: —';
+   if(s!==orig){t.textContent=s;dirty=true;}
+  }
+  if(dirty){tplZip.file(path,serialize(d));changed++;}
+ }
+ return changed;
 }
 async function safeguardHeaderFooter(tplZip,rule,meta){
  let changed=0;
@@ -497,9 +604,10 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  const body=bodyEls(tplDoc);
  // newly inserted source elements appear immediately after the original preface
  const appended=body.slice(Number(rule.cut),Number(rule.cut)+imported);
+ rabbaniFlowLongAbstract(tplDoc,info,metadata,rule,warnings);
  const deps=await importSourceParts(srcZip,tplZip,tplDoc,srcDoc,{inserted:appended,sourceRelationshipIds:sourceRefIds(appended)},warnings);
  const headers=await editJournalHeader(tplZip,tplDoc,info,rule,warnings);
- const footerFixes=await safeguardHeaderFooter(tplZip,rule,metadata);
+ const footerFixes=(await safeguardHeaderFooter(tplZip,rule,metadata))+(rule.id==='rabbani'?await scrubRabbaniHeaderFooter(tplZip,info,metadata):0);
  tplZip.file('word/document.xml',serialize(tplDoc));
  const blob=await tplZip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
  const absEnWords=sliceCount(info.abstractEn),absIdWords=sliceCount(info.abstractId);
@@ -512,6 +620,7 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  if(!info.abstractEn)warnings.push('Tidak ada Abstract Inggris di sumber; tidak membuat terjemahan otomatis.');
  if(!info.abstractId)warnings.push('Tidak ada Abstrak Indonesia di sumber; tidak membuat terjemahan otomatis.');
  if(/mabny/.test(rule.id))warnings.push('MABNY membutuhkan abstrak terstruktur; periksa Purpose/Methodology/Findings/Implications/Originality.');
+ if(rule.id==='rabbani')warnings.push('RABBANI: tanggal penerbitan, volume, nomor jurnal, DOI dan jumlah halaman terbit berasal dari penerbit, bukan data mahasiswa. Elemen contoh dinetralkan; periksa penempatan abstrak dalam Word.');
  warnings.push('Volume/nomor/tahun/DOI contoh dari template mungkin belum diterbitkan; editor wajib memverifikasi dan melengkapinya sebelum pengiriman.');
  if(headers<Object.keys(rule.header||{}).length)warnings.push('Sebagian running header tidak terpetakan secara otomatis; cek semua halaman di Word.');
  return {blob,details:{journal:rule.id,templateBased:true,frontFields:frontCount,contentBlocks:imported,sourceTables:extracted.tables,sourceFootnotes:extracted.hasNotes,sourceAssets:deps.assets,sourceRelationships:deps.relationships,headersModified:headers,footerFixes,warnings:[...new Set(warnings)],extracted:{title:info.title,author:info.author,affiliation:info.affiliation,email:info.email,abstractEnWords:absEnWords,abstractIdWords:absIdWords}}};

@@ -1,13 +1,15 @@
-# CHANGELOG
+# Perubahan
 
-## v4.0 — Audit & regenerasi 14 jurnal
+## v5.0 — Tambah RABBANI New 2023
 
-- Memulihkan audit 14 berkas template asli; render baseline 14/14.
-- Mengganti teks running header dari judul/nama mahasiswa dan mempertahankan PAGE field; termasuk KIDDO, KARSA, MEYARSA, NUANSA, dan jurnal lain sesuai relasi Word masing-masing.
-- Mengoreksi kapitalisasi judul dan nama penulis apabila sumber memakai HURUF KAPITAL semua.
-- Memberlakukan perataan `justify` pada paragraf isi, tanpa memaksa heading/gambar menjadi justify.
-- Menetralkan tanggal Received/Accepted/Published di *semua representasi* footer KARSA dan volume contoh SOCIALE 2099.
-- Menambahkan 112 uji variasi dokumen dan laporan risiko 14 template.
-- Menggunakan DOCX asli setiap jurnal sebagai dasar; tanpa backend, Python, URL API atau layanan eksternal pada website terpublikasi.
+- Jumlah jurnal dari 14 menjadi **15**.
+- Berkas DOCX asli RABBANI ditambahkan tanpa perubahan di `templates/rabbani/original.docx`.
+- Mapping judul, penulis, afiliasi, email, nomor WA, abstrak dua bahasa, kata kunci dan riwayat artikel yang ditempatkan pada shape di halaman pertama.
+- Judul contoh yang terbagi di dua paragraf kini diisi sesuai judul mahasiswa.
+- Teks header dinamis diperbarui, logo tetap dari template asli, footer dan PAGE field dipertahankan.
+- Volume, nomor, DOI dan tanggal terbit **contoh 2020** dibersihkan dan diganti dengan data resmi saja bila ada.
+- Mekanisme dua kolom mengalir disediakan ketika abstrak atau kata kunci terlalu panjang untuk shape asli.
+- Metadata tambahan: DOI, volume, nomor terbitan, bulan/tahun terbit, dan WhatsApp.
+- Regresi satu artikel untuk 15/15 jurnal berhasil. Uji tiga skenario RABBANI (normal, judul panjang, metadata resmi) dan satu skenario abstrak singkat dilakukan; render visual pakai LibreOffice.
 
-**Diketahui belum sempurna:** ketepatan sempurna Word 2010, kompleksitas multi-section, abstrak terstruktur MABNY, tanggal/DOI penerbit, dan objek Word nonstandar.
+**Masih beta:** tidak ada klaim 100% identik dengan tata letak Word 2010 atau terverifikasi memenuhi seluruh aturan jurnal. Rujukan audit 14 jurnal sebelumnya tetap dalam `AUDIT_14_JURNAL.md`.

@@ -894,5 +894,68 @@
     },
     "headerMaxChars": 55,
     "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
+  },
+  "rabbani": {
+    "id": "rabbani",
+    "cut": 33,
+    "fields": {
+      "1": "titleLine1",
+      "2": "titleLine2",
+      "4": "author",
+      "5": "affiliation",
+      "6": "email",
+      "7": "phoneLabel"
+    },
+    "textboxes": [
+      [
+        9,
+        1,
+        "abstractEn"
+      ],
+      [
+        9,
+        4,
+        "abstractId"
+      ],
+      [
+        9,
+        7,
+        "dateReceived"
+      ],
+      [
+        9,
+        8,
+        "dateRevised"
+      ],
+      [
+        9,
+        9,
+        "dateAccepted"
+      ],
+      [
+        9,
+        12,
+        "keywordsEn"
+      ]
+    ],
+    "table": [],
+    "headingCase": "upper",
+    "bodyFont": "Book Antiqua",
+    "bodySize": 12,
+    "headingSize": 12,
+    "line": 1.5,
+    "abstractWords": [
+      150,
+      200
+    ],
+    "indentTwips": 560,
+    "titleMax": 25,
+    "header": {
+      "even": "authorShort",
+      "default": "authorShort"
+    },
+    "headerMaxChars": 52,
+    "note": "RABBANI: judul Book Antiqua 13 pt; abstrak dua bahasa pada kotak kiri, riwayat artikel dan kata kunci di kotak kanan; identitas dan logo asli tetap. Tanggal, volume, DOI dari contoh harus dikosongkan sebelum terbit.",
+    "auditStatus": "DOCX asli pengguna; pemetaan kotak abstrak dan header diuji. Masih perlu verifikasi tata letak di Word 2010."
   }
 }
