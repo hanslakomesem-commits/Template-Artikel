@@ -1,51 +1,58 @@
-# ZAIN.NET Multi Template Artikel — 100% GitHub Pages
+# ZAIN.NET Multi Template Artikel — GitHub Pages Only
 
-**Bisa langsung dipublikasikan di GitHub Pages. Tidak perlu API key, Render, Python, Node.js di hosting, Supabase, atau server pemrosesan.** Kode JavaScript dan JSZip dijalankan di browser pengguna. Dokumen artikel tidak diunggah ke layanan eksternal. Template DOCX disimpan di folder `templates/` dan dibaca dari situs statis melalui `fetch`.
+**Rilis:** 2 November 2026. **Tidak menggunakan backend Python, API, database, atau layanan eksternal.**
 
-## Instalasi GitHub Pages
+## Apa yang sudah tersedia
 
-1. Buat repository baru di GitHub, misalnya `zainnet-artikel`.
-2. Ekstrak berkas ZIP ini. Unggah **isinya** ke root repository (`index.html`, `formatter.js`, `app.js`, `vendor/`, `templates/`), bukan ZIP-nya saja. Jangan melewatkan folder template atau vendor.
-3. Buka **Settings → Pages → Build and deployment → Deploy from a branch**. Pilih branch `main`, folder `/(root)`, lalu Save.
-4. Setelah GitHub Pages berhasil publish, kunjungi URL yang muncul di Settings → Pages, biasanya `https://USERNAME.github.io/zainnet-artikel/`. Nama repo disesuaikan.
-5. Pilih jurnal, unggah artikel `.docx`, tekan **Proses & Download Word**. Unduhan diproses di browser. Jika tidak muncul otomatis, tekan tautan unduh yang muncul.
+- Web mobile-friendly di `index.html`.
+- **14 pilihan jurnal**: KARSA, SOCIALE, PERDIKAN, PANYONARA, MABNY, MEYARSA, KIDDO, El Nubuwwah, GHANCARAN, Al-Huquq, SHAFIN, NUANSA, E-NASA, IQTISHADIA.
+- Semua template Word **disimpan dalam bentuk file yang sama persis** dengan berkas aslinya. Dokumen `.doc` juga memiliki versi `.docx` hasil konversi. Konversi belum divalidasi identik secara visual.
+- Pencarian katalog dan download setiap template asli.
+- Upload artikel mahasiswa dalam bentuk `.docx` dan pemrosesan di browser melalui `js/engine.js` + JSZip yang tersedia secara lokal pada folder `lib/`.
+- **AUTO DASAR (beta)** untuk seluruh 14 jurnal: mengubah ukuran halaman, margin, font, ukuran huruf, spasi, dan beberapa gaya judul/abstrak/heading sesuai profil yang tersedia. Isi artikel Word tetap menjadi dokumen sumber sehingga native footnote, gambar, dan tabel tidak sengaja dibuang.
+- Opsi eksperimental: menyalin sebagian header/footer resmi dari paket template, dan menambahkan nomor halaman otomatis. **Opsi ini dinonaktifkan secara default** karena belum selalu sesuai tata letak.
+- Download DOCX hasil yang tetap dapat diedit.
 
-**Penting:** Membuka `index.html` melalui `file://` mungkin gagal memuat template karena keamanan browser. Gunakan GitHub Pages atau server file statis lokal seperti `python -m http.server 8000` untuk menguji. Perintah tersebut hanya untuk uji lokal; **tidak dibutuhkan** pada GitHub Pages.
+### Penting: batasan format
 
-## Struktur source code
+Pemformatan AUTO ini **bukan pengganti layout Word asli** dan tidak boleh disebut "100% sesuai jurnal". Hal yang memerlukan pemeriksaan/manual: logo yang diletakkan di body (bukan header), tabel abstrak multi-kolom, running header penulis/judul pada halaman ganjil/genap, kotak tanggal redaksi, footer, footnote rumit, page breaks, kolom, daftar pustaka, dan pencetakan PDF. Tidak ada auto-PDF agar tidak menghasilkan PDF berbeda dari Microsoft Word. Cara paling aman untuk jurnal resmi adalah mengedit teks di file template asli.
 
-- `index.html`: aplikasi web yang responsif untuk HP dan PC.
-- `app.js`: tampilan, input, progres, dan unduh.
-- `formatter.js`: mesin pemformat DOCX client-side (menyunting XML OOXML sambil mempertahankan struktur dokumen sumber).
-- `vendor/jszip.min.js`: pustaka JSZip yang disertakan lokal, tidak memerlukan CDN atau akses ke layanan API.
-- `templates/karsa/template.docx`: template asli KARSA.
-- `templates/rabbani/template.docx`: template asli RABBANI.
-- `templates/alihkam/template.docx`: template asli AL-IHKAM.
-- `templates/*/rules.json`: deskripsi jurnal untuk pengembangan aturan selanjutnya.
+**Template berisi contoh** (tanggal, volume, DOI, nama penulis) yang bukan data mahasiswa. Jika memilih impor header/footer secara eksperimental, pastikan semua placeholder/contoh redaksi tidak terbawa sebagai data nyata. Khusus kotak tanggal publikasi pada footer, mesin mengganti contoh tanggal dengan tanda kosong `—` jika pola tanggal diketahui.
 
-## Fitur
+## Cara instalasi di GitHub Pages
 
-- Memilih template KARSA, RABBANI, AL-IHKAM.
-- Pemformatan judul, bagian artikel, abstrak, kata kunci, isi, dan referensi secara heuristik.
-- Mengambil ukuran halaman dan margin serta bagian header/footer contoh dari file template jurnal.
-- Nomor halaman `PAGE` pada footer yang memerlukan verifikasi akhir.
-- Kotak abstrak/sidebar pada mode RABBANI 2023 (beta).
-- Mempertahankan **paket DOCX sumber**, termasuk tabel, gambar, hyperlink, dan file footnote yang sudah ada, alih-alih membuat ulang artikel dari teks biasa.
-- Bekerja secara statis tanpa API key dan tanpa database. File artikel diproses di memori browser.
+1. Download file ZIP dan **ekstrak**.
+2. Buat repository GitHub, contohnya `zainnet-multi-template`.
+3. Upload **isi folder ZIP**, bukan folder pembungkusnya; pastikan file `index.html` di ROOT repository dan folder `js/`, `lib/`, `templates/` ikut diunggah.
+4. GitHub repository → **Settings → Pages → Build and deployment → Deploy from a branch**.
+5. Pilih branch `main`, folder `/ (root)`, lalu **Save**.
+6. Setelah GitHub Pages aktif, buka `https://USERNAME.github.io/zainnet-multi-template/` (ganti USERNAME).
+7. Pilih artikel `.docx`, jurnal, lalu klik **Proses & Download DOCX**.
 
-## Batasan penting — jangan dilewatkan
+**Tidak ada kolom URL backend**. Tidak ada file backend di paket. Hanya file statis yang dihosting GitHub.
 
-Ini versi **BETA**. Pemformatan Word sempurna/identik dengan semua tata letak template **belum terjamin**. Mesin ini tidak menjalankan Microsoft Word, sehingga hasil bisa berbeda pada tabel kompleks, logo/artwork header, sitasi, penomoran, section break, layout multi-kolom, footnote, dan halaman sampul. Urutan elemen dan konten sumber dipertahankan semaksimal mungkin; isinya tidak diterjemahkan atau dibuat menggunakan AI. Pemeriksaan akhir dengan Word atau LibreOffice tetap wajib. File `.doc` lama, PDF, dan JPG tidak didukung. Jumlah paragraf awal untuk judul perlu dipilih jika judul terdiri atas 2–3 paragraf. Browser lama atau perangkat RAM rendah mungkin lambat untuk file yang sangat besar. Tampilan offline membutuhkan server lokal atau pengaturan cache dan tidak dijamin; setelah GitHub Pages diakses, pemformatannya tidak menggunakan backend.
+## Struktur
 
-Template AL-IHKAM contoh relatif besar (sekitar 5,6 MB), sehingga pengunjung perlu mengunduh template itu satu kali saat memproses. Seluruh aset berlisensi milik masing-masing jurnal/pemilik aslinya dan digunakan sebagai acuan tata letak.
+```
+index.html                UI web responsif
+js/app.js                 UI / upload / download / validasi
+js/engine.js              Engine OpenXML di browser
+lib/jszip.min.js          Dependensi lokal JSZip (MIT/GPLv3 dual licensed)
+templates.json            Katalog 14 jurnal
+profiles.json             Profil tata letak dasar (beta)
+templates/<id>/...        Berkas asli dan, jika perlu, hasil konversi DOCX
+```
 
-## Diagnostik
+## Cara kerja dan privasi
 
-- **Mesin gagal dimuat:** pastikan `vendor/jszip.min.js` dan `formatter.js` terunggah utuh.
-- **Gagal mengambil template (404):** pastikan folder `templates/` dan nama direktori tepat, termasuk huruf kecil.
-- **Word menyatakan ada masalah pada file:** gunakan fungsi repair Word lalu laporkan file sumber + template; dokumen kompleks tertentu memerlukan konversi backend yang lebih lengkap.
-- **Font berbeda:** pasang font yang dibutuhkan template (Book Antiqua atau Times New Roman) di aplikasi pengolah Word.
+File input diproses menggunakan `File.arrayBuffer()` dalam memori browser. Browser mengambil file template Word dari repository Pages dan membuka keduanya lewat JSZip. Artikel pengguna **tidak dikirim ke server pihak lain** oleh kode ini; output dibuat sebagai `Blob` dan diunduh lokal. Pengguna tetap harus memercayai sumber website dan browser yang digunakan. Tidak ada tracking/upload jaringan untuk artikel di kode yang disertakan.
 
-## Lisensi
+## Standar kualitas dan pengujian
 
-Kode ZAIN.NET disediakan untuk pengembangan sendiri. Pustaka `JSZip` MIT / GPLv3 (pilih salah satu lisensi sesuai proyek); lisensi sumber tersedia di https://github.com/Stuk/jszip . Hak template jurnal tetap pada pemilik masing-masing.
+Pengujian fungsional dilakukan dengan artikel DOCX Anggara Putra Pratama dari percakapan pengguna. Seluruh 14 profil berhasil menghasilkan DOCX secara programatis, dapat dibuka dengan `python-docx`, dan bagian `word/footnotes.xml` dari artikel tetap dipertahankan. Tiga output contoh juga berhasil dikonversi melalui LibreOffice ke PDF. **Ini bukan sertifikasi kesesuaian visual** dengan template jurnal; pengujian browser end-to-end tidak dapat dijalankan pada lingkungan uji karena browser menolak membuka alamat lokal.
+
+Batas ukuran upload yang disarankan di UI adalah 35 MB. Pada perangkat bermemori rendah, DOCX besar dapat membuat browser lambat atau kehabisan memori. Berkas `.doc` lama untuk input artikel harus dikonversi ke `.docx` terlebih dahulu.
+
+## Memperluas hingga 30 jurnal
+
+Taruh file template jurnal baru di `templates/<slug>/original.docx`, tambah entri pada `templates.json` serta profil pada `profiles.json`. Jangan menganggap template baru sudah sesuai otomatis sebelum pengujian struktur dan layout masing-masing selesai. Saat ini ada **14 jurnal**, bukan 30 jurnal lengkap.

@@ -1,0 +1,142 @@
+{
+  "karsa": {
+    "font": "Times New Roman",
+    "bodySize": 12,
+    "titleSize": 13,
+    "authorSize": 11,
+    "abstractSize": 10,
+    "headingSize": 12,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "sociale": {
+    "font": "Arial",
+    "bodySize": 10,
+    "titleSize": 14,
+    "authorSize": 10,
+    "abstractSize": 9,
+    "headingSize": 10,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "perdikan": {
+    "font": "Arial",
+    "bodySize": 11,
+    "titleSize": 15,
+    "authorSize": 10,
+    "abstractSize": 8,
+    "headingSize": 11,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "panyonara": {
+    "font": "Cambria",
+    "bodySize": 11,
+    "titleSize": 13,
+    "authorSize": 11,
+    "abstractSize": 11,
+    "headingSize": 11,
+    "line": 1.29,
+    "indentTwips": 567
+  },
+  "mabny": {
+    "font": "Garamond",
+    "bodySize": 12,
+    "titleSize": 16,
+    "authorSize": 12,
+    "abstractSize": 11,
+    "headingSize": 14,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "meyarsa": {
+    "font": "Georgia",
+    "bodySize": 11,
+    "titleSize": 12,
+    "authorSize": 11,
+    "abstractSize": 11,
+    "headingSize": 11,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "kiddo": {
+    "font": "Verdana",
+    "bodySize": 11,
+    "titleSize": 13,
+    "authorSize": 11,
+    "abstractSize": 10,
+    "headingSize": 11,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "elnubuwwah": {
+    "font": "Book Antiqua",
+    "bodySize": 11,
+    "titleSize": 13,
+    "authorSize": 11,
+    "abstractSize": 11,
+    "headingSize": 11,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "ghancaran": {
+    "font": "Cambria",
+    "bodySize": 12,
+    "titleSize": 14,
+    "authorSize": 11,
+    "abstractSize": 10,
+    "headingSize": 12,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "alhuquq": {
+    "font": "Book Antiqua",
+    "bodySize": 11,
+    "titleSize": 13,
+    "authorSize": 11,
+    "abstractSize": 10,
+    "headingSize": 11,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "shafin": {
+    "font": "Garamond",
+    "bodySize": 12,
+    "titleSize": 13,
+    "authorSize": 11,
+    "abstractSize": 10,
+    "headingSize": 12,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "nuansa": {
+    "font": "Garamond",
+    "bodySize": 12,
+    "titleSize": 17,
+    "authorSize": 12,
+    "abstractSize": 11,
+    "headingSize": 12,
+    "line": 1,
+    "indentTwips": 560
+  },
+  "enasa": {
+    "font": "Garamond",
+    "bodySize": 12,
+    "titleSize": 14,
+    "authorSize": 11,
+    "abstractSize": 10,
+    "headingSize": 12,
+    "line": 1.15,
+    "indentTwips": 709
+  },
+  "iqtishadia": {
+    "font": "Garamond",
+    "bodySize": 12,
+    "titleSize": 13,
+    "authorSize": 11,
+    "abstractSize": 11,
+    "headingSize": 12,
+    "line": 1,
+    "indentTwips": 560
+  }
+}
