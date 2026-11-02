@@ -33,12 +33,14 @@
       250
     ],
     "header": {
-      "default": "shortTitle",
-      "even": "author"
+      "even": "author",
+      "default": "shortTitle"
     },
     "note": "Logo/identitas KARSA dipertahankan dari DOCX asli; judul pendek dan nama penulis diterapkan pada header ganjil/genap.",
     "id": "karsa",
-    "indentTwips": 560
+    "indentTwips": 560,
+    "headerMaxChars": 46,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "sociale": {
     "cut": 15,
@@ -149,7 +151,12 @@
     "note": "SOCIALE: abstrak dua bahasa dalam sel tabel, artikel asli menyebut maksimal 12 halaman (riset), 16 halaman (review).",
     "id": "sociale",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "perdikan": {
     "cut": 10,
@@ -232,7 +239,11 @@
     "note": "PERDIKAN: abstrak bahasa Inggris dan Indonesia berada pada kolom kanan tabel dua bahasa.",
     "id": "perdikan",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "default": "authorShort"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "panyonara": {
     "cut": 19,
@@ -263,8 +274,12 @@
     ],
     "note": "PANYONARA: spasi persis 17 pt untuk isi, abstrak miring dengan indent 2 cm, maksimal 4 kata kunci.",
     "id": "panyonara",
-    "header": {},
-    "exactLinePt": 17
+    "header": {
+      "even": "authorShort"
+    },
+    "exactLinePt": 17,
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "mabny": {
     "cut": 43,
@@ -312,7 +327,11 @@
     "note": "MABNY: template mengharuskan abstrak terstruktur (Purpose, Methodology, Findings, Implications, Originality). Jika artikel tidak terstruktur, penulis harus melengkapinya sendiri.",
     "id": "mabny",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "meyarsa": {
     "cut": 31,
@@ -352,7 +371,12 @@
     "note": "MEYARSA: abstrak dua bahasa, kata kunci dipisahkan titik koma.",
     "id": "meyarsa",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "kiddo": {
     "cut": 2,
@@ -484,7 +508,12 @@
     "note": "KIDDO: judul, penulis dan abstrak masuk ke tabel asli dua kolom.",
     "id": "kiddo",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 46,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "elnubuwwah": {
     "cut": 34,
@@ -528,7 +557,12 @@
     "note": "El Nubuwwah: judul/abstrak dua bahasa, jangan menyalin tanggal penerimaan contoh.",
     "id": "elnubuwwah",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "ghancaran": {
     "cut": 16,
@@ -575,7 +609,12 @@
     "note": "GHANCARAN: sampel memiliki judul contoh di awal badan dan beberapa section; judul utama dipasang pada area artikel, judul sampel dihapus.",
     "id": "ghancaran",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "author"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "alhuquq": {
     "cut": 12,
@@ -600,7 +639,12 @@
     "note": "Al-Huquq: abstrak dalam satu kolom, penulisan footnote dari sumber dipertahankan.",
     "id": "alhuquq",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "shafin": {
     "cut": 20,
@@ -642,7 +686,11 @@
     "note": "SHAFIN: logo/kepala jurnal dan tabel ARTICLE INFO–ABSTRACT asli tetap dipertahankan.",
     "id": "shafin",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "nuansa": {
     "cut": 43,
@@ -678,7 +726,12 @@
     "note": "NUANSA: judul Courier New 17 pt berasal dari template dan halaman sampul/halaman abstrak ditahan dari DOCX asli.",
     "id": "nuansa",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "enasa": {
     "cut": 19,
@@ -790,7 +843,12 @@
     ],
     "note": "E-NASA: abstrak dua bahasa pada tabel; Garamond 12, spasi 1,15; layout 1 kolom.",
     "id": "enasa",
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   },
   "iqtishadia": {
     "cut": 12,
@@ -830,6 +888,11 @@
     "note": "IQTISHADIA: templat asli menuliskan Cambria 11 pada isi, Garamond 13 pada judul.",
     "id": "iqtishadia",
     "indentTwips": 560,
-    "header": {}
+    "header": {
+      "even": "author",
+      "default": "shortTitle"
+    },
+    "headerMaxChars": 55,
+    "auditStatus": "Pemetaan header dari DOCX asli, masih memerlukan review visual"
   }
 }

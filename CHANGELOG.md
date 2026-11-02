@@ -1,12 +1,13 @@
-# Changelog
+# CHANGELOG
 
-## v3.1 — 2 November 2026
-- Mesin ulang total: template-first DOCX, bukan menyalin font dan margin saja.
-- Identitas, logo, tabel abstrak dan header/footer jurnal asli tetap berasal dari Word asli.
-- Impor konten dari artikel, native Word footnote, gambar, tabel dan relasinya.
-- Tambah aturan spesifik untuk 14 jurnal.
-- Penomoran asli dipertahankan, running header KARSA diperbarui.
-- Contoh tanggal Received/Accepted/Published dibersihkan dari footer KARSA.
-- Adaptasi ukuran judul NUANSA untuk kotak judul berukuran tetap.
-- Resize gambar yang terlalu besar dan tabel yang melampaui lebar teks.
-- Seluruh proses lokal di browser, tanpa backend.
+## v4.0 — Audit & regenerasi 14 jurnal
+
+- Memulihkan audit 14 berkas template asli; render baseline 14/14.
+- Mengganti teks running header dari judul/nama mahasiswa dan mempertahankan PAGE field; termasuk KIDDO, KARSA, MEYARSA, NUANSA, dan jurnal lain sesuai relasi Word masing-masing.
+- Mengoreksi kapitalisasi judul dan nama penulis apabila sumber memakai HURUF KAPITAL semua.
+- Memberlakukan perataan `justify` pada paragraf isi, tanpa memaksa heading/gambar menjadi justify.
+- Menetralkan tanggal Received/Accepted/Published di *semua representasi* footer KARSA dan volume contoh SOCIALE 2099.
+- Menambahkan 112 uji variasi dokumen dan laporan risiko 14 template.
+- Menggunakan DOCX asli setiap jurnal sebagai dasar; tanpa backend, Python, URL API atau layanan eksternal pada website terpublikasi.
+
+**Diketahui belum sempurna:** ketepatan sempurna Word 2010, kompleksitas multi-section, abstrak terstruktur MABNY, tanggal/DOI penerbit, dan objek Word nonstandar.

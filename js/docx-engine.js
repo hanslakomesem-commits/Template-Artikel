@@ -42,6 +42,31 @@ function replaceText(p,value){
  }
 }
 
+function titleFriendly(s){
+ const original=(s||'').replace(/\s+/g,' ').trim();
+ if(!original)return '';
+ const letters=(original.match(/[A-Za-zÀ-ÿ]/g)||[]).length;
+ const uppers=(original.match(/[A-ZÀ-Þ]/g)||[]).length;
+ // Respect mixed-case source, but normalize all-caps university paper titles.
+ if(letters && uppers/letters > .85){
+  return original.toLocaleLowerCase('id').replace(/(^|[\s(\[{:—–-])([a-zà-ÿ])/g,(_,a,b)=>a+b.toLocaleUpperCase('id'))
+   .replace(/\b(uin|paud|spss|ict|pai|umkm|doi)\b/gi,x=>x.toUpperCase());
+ }
+ return original;
+}
+function shortTitle(title,max=52){
+ const s=titleFriendly(title).replace(/[\s,.…:;!]+$/g,'');
+ if(s.length<=max)return s;
+ const words=s.split(/\s+/),out=[];
+ for(const word of words){if((out.join(' ')+(out.length?' ':'')+word).length>max-2)break;out.push(word)}
+ return (out.length?out.join(' '):s.slice(0,Math.max(18,max-3)).replace(/\s+\S*$/,''))+'…';
+}
+function displayAuthor(text){
+ const s=(text||'').replace(/\s+/g,' ').trim();
+ if(!s)return '';
+ const letters=(s.match(/[A-Za-zÀ-ÿ]/g)||[]).length,upper=(s.match(/[A-ZÀ-Þ]/g)||[]).length;
+ return letters&&upper/letters>.85?s.toLocaleLowerCase('id').replace(/\b[a-zà-ÿ]/g,c=>c.toLocaleUpperCase('id')):s;
+}
 function cleanHeading(s,rule){
  s=s.replace(/^\s*(?:[A-G]|\d{1,2})\s*[.)]\s*/i,'').trim();
  if(rule.headingCase==='upper')return s.toLocaleUpperCase('id');
@@ -90,10 +115,10 @@ function unifyMeta(info,meta){const out={...info};
  for(const k of ['title','author','affiliation','email','abstractId','abstractEn','keywordsId','keywordsEn'])if((meta||{})[k]?.trim())out[k]=meta[k].trim();
  return out;
 }
-function valueOf(slot,info,meta,warnings){
+function valueOf(slot,info,meta,warnings,rule){
  const en=info.abstractEn||'',id=info.abstractId||'';
  const ke=info.keywordsEn||info.keywordsId||'',ki=info.keywordsId||info.keywordsEn||'';
- const vals={title:info.title,shortTitle:info.title.slice(0,64),author:info.author,affiliation:info.affiliation,email:info.email,
+ const vals={title:titleFriendly(info.title),shortTitle:shortTitle(info.title,52),author:displayAuthor(info.author),affiliation:info.affiliation,email:info.email,
  abstractEn:en,abstractId:id,abstractIdBrackets:id?'['+id+']':'',abstractEnLabel:en?'Abstract: '+en:'Abstract: —',
  abstractEnPrefix:en?'ABSTRACT  '+en:'ABSTRACT',keywordsEn:ke,keywordsId:ki,
  keywordsEnLabel:ke?'Keywords: '+ke:'Keywords: —',dateReceived:'Received: '+(meta?.received||'—'),
@@ -112,12 +137,12 @@ function replaceFront(tDoc,rule,info,meta,warnings){
  for(const [idx,slot] of Object.entries(rule.fields||{})){
   const p=locateP(tDoc,idx);
   if(!p){missing.push('p'+idx);continue;}
-  replaceText(p,valueOf(slot,info,meta,warnings));filled++;
+  replaceText(p,valueOf(slot,info,meta,warnings,rule));filled++;
  }
  for(const [bi,ri,ci,pi,slot] of rule.table||[]){
   const p=locateCellP(tDoc,bi,ri,ci,pi);
   if(!p){missing.push('t'+bi+'/'+ri+'/'+ci+'/'+pi);continue;}
-  replaceText(p,valueOf(slot,info,meta,warnings));filled++;
+  replaceText(p,valueOf(slot,info,meta,warnings,rule));filled++;
  }
  if(missing.length)warnings.push('Posisi template berubah: '+missing.join(', '));
  return filled;
@@ -159,7 +184,10 @@ function applyParaFormatting(p,kind,rule,proto){
  if(proto){const src=first(proto,'pPr');if(src){const repl=doc.importNode(src,true);for(const v of children(repl,'sectPr'))repl.removeChild(v);if(old)p.replaceChild(repl,old);else p.insertBefore(repl,p.firstChild);}}
  const ppr=first(p,'pPr')||make(doc,'pPr');if(!ppr.parentNode)p.insertBefore(ppr,p.firstChild);
  for(const ps of children(ppr,'pStyle'))ppr.removeChild(ps); // source style ID may not exist in journal.
- if(!proto){let jc=first(ppr,'jc');if(!jc){jc=make(doc,'jc');ppr.appendChild(jc)}attr(jc,'val',kind==='heading'?'left':'both');}
+ // Imported paragraphs often carry the source alignment; the journal body must
+ // override it. Figures are centered separately in normalizeArticleNode().
+ let jc=first(ppr,'jc');if(!jc){jc=make(doc,'jc');ppr.appendChild(jc)}
+ attr(jc,'val',kind==='heading'?'left':'both');
  const sp=first(ppr,'spacing')||make(doc,'spacing');if(!sp.parentNode)ppr.appendChild(sp);
  if(rule.exactLinePt){attr(sp,'line',Math.round(rule.exactLinePt*20));attr(sp,'lineRule','exact');}
  else if(rule.line){attr(sp,'line',Math.round(rule.line*240));attr(sp,'lineRule','auto');}
@@ -350,21 +378,50 @@ async function importSourceParts(srcZip,tplZip,tDoc,srcDoc,notes,warnings){
  return {assets:assetCount,relationships:idMap.size};
 }
 function sourceRefIds(nodes){const ids=new Set();for(const n of nodes){for(const z of [n,...Array.from(n.getElementsByTagName('*'))])for(const a of ['id','embed','link'])if(z.hasAttributeNS?.(NS.r,a))ids.add(z.getAttributeNS(NS.r,a));}return ids;}
-function editJournalHeader(tplZip,templateDoc,info,rule){
+function editHeaderParagraph(p,value){
+ // Replace only textual running-header content; keep PAGE fields / cached digits.
+ const nodes=get(p,'t');const candidates=nodes.filter(x=>{
+  const r=x.parentNode;
+  return /[A-Za-zÀ-ÿ]/.test(x.textContent||'') && !(r&&get(r,'instrText').length);
+ });
+ if(!candidates.length)return false;
+ // In a mixed header such as "2   Author Surnames" choose the longest
+ // human-readable string and leave the PAGE field intact.
+ candidates.sort((a,b)=>(b.textContent||'').length-(a.textContent||'').length);
+ const target=candidates[0];target.textContent=value;target.setAttributeNS(NS.xml,'xml:space','preserve');
+ for(const t of candidates.slice(1))t.textContent='';
+ return true;
+}
+function headerTextMatchesRule(s,key,rule){
+ if(!s||s.length>260)return false;
+ const blacklist=/^(?:DOI|ISSN|Vol\.|Journal Homepage|E-ISSN|P-ISSN)/i;
+ if(blacklist.test(s))return false;
+ if(key==='author'||key==='authorShort')return /author|penulis|nama lengkap|indah susilowati|dewi astin|name|hazim|sulistowati|sulisowati|mohammad/i.test(s);
+ if(key==='shortTitle')return /title|judul|historical and religious|article tittle|article title|persepsi|artikel/i.test(s);
+ return true;
+}
+async function editJournalHeader(tplZip,templateDoc,info,rule,warnings){
  const rules=rule.header||{},sections=get(templateDoc,'sectPr'),relsFile=tplZip.file(DOCRELPATH);
- if(!sections.length||!Object.keys(rules).length||!relsFile)return Promise.resolve(0);
- return (async()=>{
-  const rels=parse(await relsFile.async('string'));let count=0;
-  for(const sec of sections){for(const header of children(sec,'headerReference')){
-   const type=aval(header,'type')||'default',valKey=rules[type];if(!valKey)continue;
-   const rid=aval(header,'id',NS.r),rel=relNodes(rels).find(x=>x.getAttribute('Id')===rid);if(!rel)continue;
-   const part=normal('word/'+rel.getAttribute('Target'));if(!tplZip.file(part))continue;
-   const h=parse(await tplZip.file(part).async('string'));
-   const p=get(h,'p').find(x=>textOf(x));if(!p)continue;
-   const content=valKey==='shortTitle'?info.title.slice(0,70):info[valKey];
-   if(content){replaceText(p,content);tplZip.file(part,serialize(h));count++;}
-  }}return count;
- })();
+ if(!sections.length||!Object.keys(rules).length||!relsFile)return 0;
+ const rels=parse(await relsFile.async('string'));let count=0;const done=new Set();
+ const valueFor=(key)=>key==='shortTitle'?shortTitle(info.title,rule.headerMaxChars||52):
+   key==='author'?displayAuthor(info.author):
+   key==='authorShort'?(displayAuthor(info.author)+(info.title?' — '+shortTitle(info.title,30):'')):
+   info[key]||'';
+ for(const sec of sections)for(const header of children(sec,'headerReference')){
+  const type=aval(header,'type')||'default',key=rules[type];if(!key)continue;
+  const rid=aval(header,'id',NS.r),rel=relNodes(rels).find(x=>x.getAttribute('Id')===rid);if(!rel)continue;
+  const part=normal('word/'+rel.getAttribute('Target'));if(!tplZip.file(part)||done.has(part))continue;
+  done.add(part);
+  const h=parse(await tplZip.file(part).async('string'));
+  const eligible=get(h,'p').filter(p=>headerTextMatchesRule(textOf(p),key,rule));
+  // Do not touch the journal's masthead merely because it contains 'Title'.
+  const p=eligible.find(p=>textOf(p).length>5&& !/\b(?:Journal Homepage|ISSN|DOI)\b/i.test(textOf(p)));
+  if(!p){warnings.push('Header '+rule.id+'/'+type+' tidak dapat dipetakan aman; periksa manual.');continue;}
+  const content=valueFor(key);
+  if(content&&editHeaderParagraph(p,content)){tplZip.file(part,serialize(h));count++;}
+ }
+ return count;
 }
 function safeEditorDates(tplZip,tDoc,rule,meta){
  // Scrub the author-guideline demonstration dates (NEVER copy them to a new student article).
@@ -389,19 +446,32 @@ function safeEditorDates(tplZip,tDoc,rule,meta){
 }
 async function safeguardHeaderFooter(tplZip,rule,meta){
  let changed=0;
+ const dateReplacement='Received: '+(meta.received||'—')+', Accepted: '+(meta.accepted||'—')+', Published: '+(meta.published||'—');
  for(const path of Object.keys(tplZip.files).filter(k=>/^word\/(?:header|footer)[^/]*\.xml$/.test(k))){
   const d=parse(await tplZip.file(path).async('string'));let edited=false;
-  for(const p of get(d,'p')){
-   const s=textOf(p);if(!s||s.length>200)continue;
-   if(/Received\s*:/.test(s)&&/Accepted\s*:/.test(s)){
-     replaceText(p,'Received: '+(meta.received||'—')+', Accepted: '+(meta.accepted||'—')+', Published: '+(meta.published||'—'));
-     edited=true;
+  // Some Word 2010 templates split a single date across many runs, including
+  // a legacy WordArt fallback. Replace ALL representations, not just one w:t.
+  for(const paragraph of get(d,'p')){
+   const s=textOf(paragraph);
+   if(rule.id==='karsa' && s.includes('Received:')&&s.includes('Accepted')&&s.includes('Published')){
+    // Top paragraph can wrap the inner textboxes: leave nested p elements alone
+    // and patch the innermost actual text-bearing p only.
+    if(get(paragraph,'p').length)continue;
+    const ts=get(paragraph,'t');if(!ts.length)continue;
+    ts[0].textContent=dateReplacement;ts[0].setAttributeNS(NS.xml,'xml:space','preserve');
+    for(const t of ts.slice(1))t.textContent='';edited=true;
    }
-   if(rule.id==='sociale' && /Vol\.\s*99.*2099/i.test(s)){
-     replaceText(p,'Vol. —, No. —, Tahun —, pp. —');edited=true;
+   if(rule.id==='sociale' && /Vol\.\s*99.*Month\s*2099/i.test(s)){
+    // Keep "SOCIALE" and the paragraph style but clear sample volume/year.
+    const ts=get(paragraph,'t');if(!ts.length)continue;
+    ts[0].textContent='SOCIALE, Vol. —, No. —, Tahun —';
+    for(const t of ts.slice(1))t.textContent='';edited=true;
    }
-   if(rule.id==='sociale' && /DOI.*paperID/i.test(s)){
-     replaceText(p,'DOI: —');edited=true;
+  }
+  for(const t of get(d,'t')){
+   const s=t.textContent||'';
+   if(rule.id==='sociale'&&/2099|paperID/.test(s)){
+    t.textContent=s.replace(/Vol\.\s*99,\s*No\.\s*1,\s*Month\s*2099,\s*pp\.\s*1~1x/gi,'Vol. —, No. —, Tahun —, pp. —').replace(/Vol\.\s*99,\s*No\.\s*1,\s*Month\s*2099/gi,'Vol. —, No. —, Tahun —').replace(/10\.19105\/sociale\.v2i1\.paperID/gi,'—');edited=true;
    }
   }
   if(edited){tplZip.file(path,serialize(d));changed++;}
@@ -428,7 +498,7 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  // newly inserted source elements appear immediately after the original preface
  const appended=body.slice(Number(rule.cut),Number(rule.cut)+imported);
  const deps=await importSourceParts(srcZip,tplZip,tplDoc,srcDoc,{inserted:appended,sourceRelationshipIds:sourceRefIds(appended)},warnings);
- const headers=await editJournalHeader(tplZip,tplDoc,info,rule);
+ const headers=await editJournalHeader(tplZip,tplDoc,info,rule,warnings);
  const footerFixes=await safeguardHeaderFooter(tplZip,rule,metadata);
  tplZip.file('word/document.xml',serialize(tplDoc));
  const blob=await tplZip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
@@ -442,7 +512,8 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  if(!info.abstractEn)warnings.push('Tidak ada Abstract Inggris di sumber; tidak membuat terjemahan otomatis.');
  if(!info.abstractId)warnings.push('Tidak ada Abstrak Indonesia di sumber; tidak membuat terjemahan otomatis.');
  if(/mabny/.test(rule.id))warnings.push('MABNY membutuhkan abstrak terstruktur; periksa Purpose/Methodology/Findings/Implications/Originality.');
- warnings.push('Tanggal volume/DOI contoh dalam header jurnal mungkin belum sesuai edisi; jangan kirim tanpa mengganti metadata penerbit.');
+ warnings.push('Volume/nomor/tahun/DOI contoh dari template mungkin belum diterbitkan; editor wajib memverifikasi dan melengkapinya sebelum pengiriman.');
+ if(headers<Object.keys(rule.header||{}).length)warnings.push('Sebagian running header tidak terpetakan secara otomatis; cek semua halaman di Word.');
  return {blob,details:{journal:rule.id,templateBased:true,frontFields:frontCount,contentBlocks:imported,sourceTables:extracted.tables,sourceFootnotes:extracted.hasNotes,sourceAssets:deps.assets,sourceRelationships:deps.relationships,headersModified:headers,footerFixes,warnings:[...new Set(warnings)],extracted:{title:info.title,author:info.author,affiliation:info.affiliation,email:info.email,abstractEnWords:absEnWords,abstractIdWords:absIdWords}}};
 }
 global.ZainDocxEngine={build};
