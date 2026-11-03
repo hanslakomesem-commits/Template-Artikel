@@ -158,9 +158,10 @@
     "year": "DOCX New 2023 (contoh Vol. 1, 2020)",
     "source_format": "docx",
     "original": "templates/rabbani/original.docx",
-    "docx": "templates/rabbani/original.docx",
+    "docx": "templates/rabbani/word2010_base.docx",
     "auto": "template-first beta",
     "auto_supported": true,
-    "status": "Berkas Word asli dari pengguna; revisi penerbitan/DOI membutuhkan metadata resmi"
+    "status": "Asli 2023 tersedia; mode AUTO memakai master Word2010 hasil LO resave",
+    "compatible_base": "templates/rabbani/word2010_base.docx"
   }
 ]

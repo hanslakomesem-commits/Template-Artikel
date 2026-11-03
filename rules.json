@@ -897,7 +897,7 @@
   },
   "rabbani": {
     "id": "rabbani",
-    "cut": 33,
+    "cut": 10,
     "fields": {
       "1": "titleLine1",
       "2": "titleLine2",
@@ -906,38 +906,7 @@
       "6": "email",
       "7": "phoneLabel"
     },
-    "textboxes": [
-      [
-        9,
-        1,
-        "abstractEn"
-      ],
-      [
-        9,
-        4,
-        "abstractId"
-      ],
-      [
-        9,
-        7,
-        "dateReceived"
-      ],
-      [
-        9,
-        8,
-        "dateRevised"
-      ],
-      [
-        9,
-        9,
-        "dateAccepted"
-      ],
-      [
-        9,
-        12,
-        "keywordsEn"
-      ]
-    ],
+    "textboxes": [],
     "table": [],
     "headingCase": "upper",
     "bodyFont": "Book Antiqua",
@@ -955,7 +924,9 @@
       "default": "authorShort"
     },
     "headerMaxChars": 52,
-    "note": "RABBANI: judul Book Antiqua 13 pt; abstrak dua bahasa pada kotak kiri, riwayat artikel dan kata kunci di kotak kanan; identitas dan logo asli tetap. Tanggal, volume, DOI dari contoh harus dikosongkan sebelum terbit.",
-    "auditStatus": "DOCX asli pengguna; pemetaan kotak abstrak dan header diuji. Masih perlu verifikasi tata letak di Word 2010."
+    "note": "KHUSUS RABBANI: hanya ABSTRAK Indonesia. Menggunakan master Word 2010 yang sudah disimpan ulang melalui LibreOffice dan dibersihkan dari artikel contoh. Kotak biru mengalir sebagai tabel Word, logo dan header asli tetap tersedia.",
+    "auditStatus": "Master LO-resaved berdasar contoh yang terbukti terbuka di Word 2010; hasil yang dimodifikasi mesin v8 masih memerlukan uji di komputer pengguna.",
+    "abstractLanguage": "id-only",
+    "compatMaster": "word2010"
   }
 }

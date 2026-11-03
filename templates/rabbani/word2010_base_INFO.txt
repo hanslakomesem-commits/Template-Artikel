@@ -1,0 +1,1 @@
+Basis RABBANI khusus Word 2010: struktur diambil dari file RABBANI_V7_CONTOH_WORD2010_ALTERNATIF_LO yang telah dikonfirmasi terbuka oleh pengguna. Data artikel mahasiswa dan footnote contoh telah dibersihkan. Logo/header/footer tetap dari berkas tersebut. Ini master kompatibilitas, bukan dokumen resmi jurnal; original.docx tersedia terpisah.

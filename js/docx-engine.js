@@ -172,6 +172,9 @@ function replaceFront(tDoc,rule,info,meta,warnings){
   else replaceText(p,valueOf(slot,info,meta,warnings,rule));filled++;
  }
  for(const [bi,pi,slot] of rule.textboxes||[]){
+  // RABBANI Indonesia-only replaces its anchored shapes with a native table.
+  // No need to rewrite text inside an object that will be removed.
+  if(rule.id==='rabbani'&&rule.abstractLanguage==='id-only')continue;
   const p=locateNestedP(tDoc,bi,pi);
   if(!p){missing.push('box'+bi+'/'+pi);continue;}
   replaceText(p,valueOf(slot,info,meta,warnings,rule));filled++;
@@ -461,10 +464,13 @@ async function editJournalHeader(tplZip,templateDoc,info,rule,warnings){
  return count;
 }
 function rabbaniFlowLongAbstract(tDoc,info,meta,rule,warnings){
- if(rule.id!=='rabbani')return false;
- const words=sliceCount(info.abstractEn)+sliceCount(info.abstractId);
- const keywordChars=(info.keywordsEn||info.keywordsId||'').length;
- if(words<=215 && keywordChars<=43)return false;
+ if(rule.id!=='rabbani'||rule.compatMaster==='word2010')return false;
+ const indonesiaOnly=rule.abstractLanguage==='id-only';
+ const words=(indonesiaOnly?0:sliceCount(info.abstractEn))+sliceCount(info.abstractId);
+ const keywordChars=(indonesiaOnly?info.keywordsId:(info.keywordsEn||info.keywordsId)||'').length;
+ // RABBANI custom Indonesia-only always uses a flowing Word table, so the
+ // fixed-size bilingual example box cannot clip the single Indonesian abstract.
+ if(!indonesiaOnly && words<=215 && keywordChars<=43)return false;
  const d=tDoc,body=getBody(d),els=bodyEls(d),original=els[9];
  if(!original||original.localName!=='p')return false;
  // The PDF-like anchored boxes in the official DOCX are fixed height and
@@ -493,20 +499,42 @@ function rabbaniFlowLongAbstract(tDoc,info,meta,rule,warnings){
   c.appendChild(p);return p;
  }
  const c1=cell(left,'D5F5FA'),c2=cell(right,null);
- para(c1,'ABSTRACT',true);para(c1,info.abstractEn||'—',false);
- para(c1,'ABSTRAK',true);para(c1,info.abstractId||'—',false);
+ if(!indonesiaOnly){para(c1,'ABSTRACT',true);para(c1,info.abstractEn||'—',false);}
+ para(c1,'ABSTRAK',true);para(c1,info.abstractId||'—',false,indonesiaOnly?10.5:11);
  para(c2,'ARTICLE HISTORY',true);
  para(c2,'Received: '+(meta?.received||'—'),false,10);
  para(c2,'Revised: '+(meta?.revised||'—'),false,10);
  para(c2,'Accepted: '+(meta?.accepted||'—'),false,10);
  para(c2,'KEYWORDS',true);
- para(c2,info.keywordsEn||info.keywordsId||'—',false,10);
+ para(c2,(indonesiaOnly?info.keywordsId:(info.keywordsEn||info.keywordsId))||'—',false,10);
  body.insertBefore(tbl,original);
  // Remove original anchored shapes and their spacer paragraphs, not the real article.
  for(let i=9;i<33;i++)if(els[i]?.parentNode===body)body.removeChild(els[i]);
- warnings.push('RABBANI: kotak teks Word asli tidak cukup fleksibel untuk abstrak '+words+' kata / kata kunci '+keywordChars+' karakter. Sistem memakai tabel Word dua kolom yang dapat mengalir ke halaman berikutnya agar teks tidak terpotong. Periksa hasil visual.');
+ warnings.push(indonesiaOnly?'RABBANI KHUSUS: hanya ABSTRAK Bahasa Indonesia; abstrak Inggris sengaja tidak dimasukkan. Tabel dua kolom dapat mengalir jika isi panjang.':'RABBANI: kotak teks Word asli tidak cukup fleksibel untuk abstrak '+words+' kata / kata kunci '+keywordChars+' karakter. Sistem memakai tabel Word dua kolom yang dapat mengalir ke halaman berikutnya agar teks tidak terpotong. Periksa hasil visual.');
  return true;
 }
+// RABBANI v8 uses a Word 2010-tested, LibreOffice-normalized master.
+// The master is CLEAN (no prior student's paragraphs or footnotes).
+// Unlike the v7 floating shape, the first-page abstract is a native Word table.
+function fillRabbaniWord2010Table(tDoc,info,meta,rule,warnings){
+ if(rule.id!=='rabbani'||rule.compatMaster!=='word2010')return 0;
+ const entries=[
+  [0,0,0,'ABSTRAK'],[0,0,1,info.abstractId||'—'],
+  [0,1,0,'ARTICLE HISTORY'],[0,1,1,'Received: '+(meta.received||'—')],
+  [0,1,2,'Revised: '+(meta.revised||'—')],
+  [0,1,3,'Accepted: '+(meta.accepted||'—')],
+  [0,1,4,'KEYWORDS'],[0,1,5,info.keywordsId||'—']
+ ];
+ let filled=0;
+ for(const [ri,ci,pi,value] of entries){
+  const target=locateCellP(tDoc,9,ri,ci,pi);
+  if(!target)throw Error('RABBANI Word2010: tabel abstrak master tidak sesuai struktur v8');
+  replaceText(target,value);filled++;
+ }
+ warnings.push('RABBANI: master DOCX kompatibilitas dibuat dari hasil Word yang telah berhasil dibuka di komputer pengguna. Perubahan baru tetap perlu diuji di Word 2010.');
+ return filled;
+}
+
 function safeEditorDates(tplZip,tDoc,rule,meta){
  // Scrub the author-guideline demonstration dates (NEVER copy them to a new student article).
  function cleanDate(p){
@@ -528,6 +556,39 @@ function safeEditorDates(tplZip,tDoc,rule,meta){
  for(const p of get(getBody(tDoc),'p'))cleanDate(p);
  return cleanDate;
 }
+// RABBANI v8: rebuild a clean first-page footer instead of retaining
+// nested legacy floating textboxes (which are duplicated in Word/LibreOffice).
+async function writeRabbaniCompatibleFooter(tplZip,info,meta,rule){
+ if(rule.id!=='rabbani'||rule.compatMaster!=='word2010')return 0;
+ const d=parse('<w:ftr xmlns:w="'+NS.w+'"/>'),root=d.documentElement;
+ function paragraph(value,font=8){
+  const p=make(d,'p'),pr=make(d,'pPr'),jc=make(d,'jc');attr(jc,'val','right');pr.appendChild(jc);
+  const spacing=make(d,'spacing');attr(spacing,'before',0);attr(spacing,'after',0);pr.appendChild(spacing);p.appendChild(pr);
+  const r=make(d,'r'),rp=make(d,'rPr'),rf=make(d,'rFonts');
+  attr(rf,'ascii','Book Antiqua');attr(rf,'hAnsi','Book Antiqua');rp.appendChild(rf);
+  const sz=make(d,'sz');attr(sz,'val',font*2);rp.appendChild(sz);r.appendChild(rp);
+  const t=make(d,'t');t.setAttributeNS(NS.xml,'xml:space','preserve');t.textContent=value;r.appendChild(t);
+  p.appendChild(r);root.appendChild(p);return p;
+ }
+ const firstP=paragraph('© (—) '+(displayAuthor(info.author)||'Penulis')+'  |  ');
+ // A standard complex PAGE field is interoperable with Word 2010 and LO.
+ // Avoid fldSimple: LO reserializes those as begin/instruction/separate/end.
+ function fieldRun(kind,content){
+  const r=make(d,'r'),el=make(d,kind);
+  if(kind==='fldChar')attr(el,'fldCharType',content);
+  else {el.setAttributeNS(NS.xml,'xml:space','preserve');el.textContent=content;}
+  r.appendChild(el);firstP.appendChild(r);
+ }
+ fieldRun('fldChar','begin');fieldRun('instrText',' PAGE ');fieldRun('fldChar','separate');
+ const run=make(d,'r'),tx=make(d,'t');tx.textContent='1';run.appendChild(tx);firstP.appendChild(run);
+ fieldRun('fldChar','end');
+ paragraph('Received: '+(meta.received||'—')+' | Revised: '+(meta.revised||'—')+' | Accepted: '+(meta.accepted||'—'));
+ // Keep page range blank: assigned by publisher, not the student.
+ paragraph('Pages: —');
+ tplZip.file('word/footer3.xml',serialize(d));
+ return 1;
+}
+
 async function scrubRabbaniHeaderFooter(tplZip,info,meta){
  if(!info)return 0;
  const author=displayAuthor(info.author)||'—';
@@ -585,6 +646,114 @@ async function safeguardHeaderFooter(tplZip,rule,meta){
  }
  return changed;
 }
+
+// Word 2010 note consistency: the imported article may use note separator IDs
+// (-1,0), while the selected journal template explicitly declares (0,1).
+// These must agree or a strict Word implementation may treat the first actual
+// footnote as a separator. LibreOffice's successful re-export also renumbers them.
+async function normalizeNotesAndOrphans(tplZip,tDoc,rule,warnings){
+ let changes={noteIds:0,removedUnusedEndnotes:0,removedOrphans:0,removedEmptyRels:0};
+ const settingsPath='word/settings.xml',notesPath='word/footnotes.xml';
+ const settingsFile=tplZip.file(settingsPath),notesFile=tplZip.file(notesPath);
+ if(settingsFile&&notesFile){
+  const settings=parse(await settingsFile.async('string'));
+  const notes=parse(await notesFile.async('string'));
+  const fp=get(settings,'footnotePr')[0];
+  const specs=fp?children(fp,'footnote'):[];
+  const declared=specs.map(x=>Number(aval(x,'id'))).filter(Number.isFinite);
+  const targets=declared.length>=2?declared.slice(0,2):[-1,0];
+  const allNotes=children(notes.documentElement,'footnote');
+  const sep=allNotes.find(x=>aval(x,'type')==='separator');
+  const cont=allNotes.find(x=>aval(x,'type')==='continuationSeparator');
+  if(sep&&cont){
+   const map=new Map(),oldSep=aval(sep,'id'),oldCont=aval(cont,'id');
+   map.set(String(oldSep),String(targets[0]));map.set(String(oldCont),String(targets[1]));
+   let next=Math.max(1,...targets.map(x=>x+1));
+   for(const note of allNotes){
+    if(note===sep||note===cont)continue;
+    const old=aval(note,'id');while(targets.includes(next))next++;
+    map.set(String(old),String(next++));
+   }
+   // Rewriting in two phases avoids collisions, e.g. 0 -> 1 and 1 -> 2.
+   for(const note of allNotes){const prev=aval(note,'id');if(map.has(String(prev))){
+    const replacement=map.get(String(prev));if(String(prev)!==replacement)changes.noteIds++;
+    attr(note,'id',replacement);
+   }}
+   for(const ref of get(tDoc,'footnoteReference')){
+    const old=aval(ref,'id');if(map.has(String(old)))attr(ref,'id',map.get(String(old)));
+   }
+   if(declared.length>=2){
+    attr(specs[0],'id',String(targets[0]));attr(specs[1],'id',String(targets[1]));
+   }
+   tplZip.file(notesPath,serialize(notes));
+   tplZip.file(settingsPath,serialize(settings));
+  }
+ }
+ // Never carry unrelated endnotes when the student article has none.
+ if(tplZip.file('word/endnotes.xml')&&get(tDoc,'endnoteReference').length===0){
+  tplZip.remove('word/endnotes.xml');tplZip.remove('word/_rels/endnotes.xml.rels');
+  const rp='word/_rels/document.xml.rels',rels=parse(await tplZip.file(rp).async('string'));
+  for(const rel of relNodes(rels))if((rel.getAttribute('Type')||'').endsWith('/endnotes'))rels.documentElement.removeChild(rel);
+  tplZip.file(rp,serialize(rels));
+  const ct=parse(await tplZip.file(CTYPES).async('string'));
+  for(const ov of get(ct,'Override',NS.ct))if(ov.getAttribute('PartName')==='/word/endnotes.xml')ov.parentNode.removeChild(ov);
+  tplZip.file(CTYPES,serialize(ct));changes.removedUnusedEndnotes++;
+ }
+ // Empty note .rels files have no functional value and are dropped by LO.
+ for(const relPath of ['word/_rels/footnotes.xml.rels','word/_rels/endnotes.xml.rels']){
+  if(!tplZip.file(relPath))continue;
+  const d=parse(await tplZip.file(relPath).async('string'));
+  if(relNodes(d).length===0){tplZip.remove(relPath);changes.removedEmptyRels++;}
+ }
+ // Remove orphan XLSX embeddings, if no relationship in the package points to them.
+ const referenced=new Set();
+ for(const relFile of Object.keys(tplZip.files).filter(x=>x.endsWith('.rels')&&!tplZip.files[x].dir)){
+  const d=parse(await tplZip.file(relFile).async('string'));
+  const source=relFile==='_rels/.rels'?'':relFile.replace(/_rels\/([^/]+)\.rels$/,'$1');
+  const home=relFile==='_rels/.rels'?'':dir(source);
+  for(const rel of relNodes(d)){
+   if(rel.getAttribute('TargetMode')==='External')continue;
+   const target=rel.getAttribute('Target')||'';
+   referenced.add(target[0]==='/'?normal(target):normal(home+target));
+  }
+ }
+ for(const part of Object.keys(tplZip.files).filter(x=>/^word\/embeddings\/[^/]+\.xlsx$/i.test(x))){
+  if(!referenced.has(part)){
+   tplZip.remove(part);changes.removedOrphans++;
+   const ct=parse(await tplZip.file(CTYPES).async('string'));
+   for(const ov of get(ct,'Override',NS.ct))if(ov.getAttribute('PartName')==='/'+part)ov.parentNode.removeChild(ov);
+   tplZip.file(CTYPES,serialize(ct));
+  }
+ }
+ if(changes.noteIds)warnings.push('Kompatibilitas Word: '+changes.noteIds+' ID catatan kaki disesuaikan dengan pengaturan master jurnal.');
+ return changes;
+}
+
+// Packaging guard: do not offer a DOCX containing malformed XML or missing related parts.
+async function inspectWordPackage(zip,rule,warnings){
+ const errors=[],extra=[];
+ for(const path of Object.keys(zip.files).filter(n=>/\.(?:xml|rels)$/i.test(n))){
+  try{parse(await zip.file(path).async('string'));}
+  catch(e){errors.push('XML rusak pada '+path);}
+ }
+ const parts=Object.keys(zip.files).filter(x=>!zip.files[x].dir);
+ for(const p of parts.filter(x=>x.endsWith('.rels'))){
+  let d;try{d=parse(await zip.file(p).async('string'));}catch{continue;}
+  const folder=p==='_rels/.rels'?'':p.replace(/_rels\/([^/]+)\.rels$/,'');
+  const source=p==='_rels/.rels'?'':folder+p.split('/').pop().slice(0,-5);
+  const ids=new Set();
+  for(const r of relNodes(d)){
+   const id=r.getAttribute('Id'),target=r.getAttribute('Target')||'';
+   if(ids.has(id))errors.push('Relasi duplikat '+id+' di '+p);ids.add(id);
+   if(r.getAttribute('TargetMode')==='External'||!target||target[0]==='#')continue;
+   const dest=target[0]==='/'?normal(target):normal(dir(source)+target);
+   if(dest&&!zip.file(dest))extra.push('Aset relasi tidak ditemukan: '+p+' → '+dest);
+  }
+ }
+ if(extra.length)warnings.push('Paket DOCX memiliki referensi eksternal internal yang belum ditemukan: '+extra.slice(0,2).join('; '));
+ return {errors,warnings:extra};
+}
+
 // Word 2010 compatibility: properties MUST be in the OOXML schema order.
 // LibreOffice often accepts out-of-order properties, but legacy Word can reject
 // or crash on them. The original template is untouched; only the generated
@@ -632,11 +801,16 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  const [srcXml,tplXml]=await Promise.all([srcZip.file('word/document.xml').async('string'),tplZip.file('word/document.xml').async('string')]);
  const srcDoc=parse(srcXml),tplDoc=parse(tplXml),warnings=[];
  const extracted=fromSource(srcDoc),info=unifyMeta(extracted,metadata);
+ // Custom ZAIN.NET RABBANI variant only: the student's English abstract and
+ // English keyword field are not inserted. Other journals remain bilingual.
+ const rabbaniIndonesiaOnly=rule.id==='rabbani' && rule.abstractLanguage==='id-only';
+ if(rabbaniIndonesiaOnly){info.abstractEn='';info.keywordsEn='';}
  if(!info.title)throw Error('Judul artikel tidak terdeteksi. Isi Judul manual pada formulir.');
  const headingP=bodyEls(tplDoc)[Number(rule.cut)];if(!headingP)throw Error('Letak paragraf isi template berubah.');
  const prototype=findPrototype(tplDoc,rule);
+ if(rule.id==='rabbani'&&rule.compatMaster==='word2010'&&(!prototype.heading||!prototype.body))throw Error('Master Word2010 RABBANI tidak memiliki contoh format paragraf.');
  const actualRule={...rule,pageWidthTwips:availablePageWidth(tplDoc)};
- const frontCount=replaceFront(tplDoc,rule,info,metadata,warnings);
+ const frontCount=replaceFront(tplDoc,rule,info,metadata,warnings)+fillRabbaniWord2010Table(tplDoc,info,metadata,rule,warnings);
  if(rule.id==='nuansa')fitNuansaLongTitle(tplDoc,info,warnings);
  safeEditorDates(tplZip,tplDoc,rule,metadata);
  const imported=appendMain(tplDoc,actualRule,extracted.content,prototype,warnings);
@@ -645,11 +819,14 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  const appended=body.slice(Number(rule.cut),Number(rule.cut)+imported);
  rabbaniFlowLongAbstract(tplDoc,info,metadata,rule,warnings);
  const deps=await importSourceParts(srcZip,tplZip,tplDoc,srcDoc,{inserted:appended,sourceRelationshipIds:sourceRefIds(appended)},warnings);
+ const compatFixes=await normalizeNotesAndOrphans(tplZip,tplDoc,rule,warnings);
  const headers=await editJournalHeader(tplZip,tplDoc,info,rule,warnings);
- const footerFixes=(await safeguardHeaderFooter(tplZip,rule,metadata))+(rule.id==='rabbani'?await scrubRabbaniHeaderFooter(tplZip,info,metadata):0);
+ const footerFixes=(await safeguardHeaderFooter(tplZip,rule,metadata))+(rule.id==='rabbani'?await scrubRabbaniHeaderFooter(tplZip,info,metadata):0)+(await writeRabbaniCompatibleFooter(tplZip,info,metadata,rule));
  const propertyOrderFixes=normalizePropertyOrder(tplDoc);
  tplZip.file('word/document.xml',serialize(tplDoc));
  const otherPartOrderFixes=await normalizeOtherWordParts(tplZip);
+ const guard=await inspectWordPackage(tplZip,rule,warnings);
+ if(guard.errors.length)throw Error('Paket Word tidak valid: '+guard.errors.slice(0,4).join('; '));
  const blob=await tplZip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',compression:'DEFLATE',compressionOptions:{level:6}});
  const absEnWords=sliceCount(info.abstractEn),absIdWords=sliceCount(info.abstractId);
  if(rule.abstractWords){for(const [lang,n] of [['Inggris',absEnWords],['Indonesia',absIdWords]]){
@@ -658,13 +835,13 @@ async function build(articleBuffer,templateBuffer,rule,metadata={}){
  if(rule.titleMax&&sliceCount(info.title)>rule.titleMax)warnings.push('Judul '+sliceCount(info.title)+' kata; batas yang tercatat untuk '+rule.id+' '+rule.titleMax+' kata.');
  if(!info.author)warnings.push('Nama penulis belum terdeteksi; isi manual pada metadata.');
  if(!info.affiliation)warnings.push('Afiliasi belum terdeteksi; isi manual pada metadata.');
- if(!info.abstractEn)warnings.push('Tidak ada Abstract Inggris di sumber; tidak membuat terjemahan otomatis.');
+ if(!info.abstractEn && !rabbaniIndonesiaOnly)warnings.push('Tidak ada Abstract Inggris di sumber; tidak membuat terjemahan otomatis.');
  if(!info.abstractId)warnings.push('Tidak ada Abstrak Indonesia di sumber; tidak membuat terjemahan otomatis.');
  if(/mabny/.test(rule.id))warnings.push('MABNY membutuhkan abstrak terstruktur; periksa Purpose/Methodology/Findings/Implications/Originality.');
- if(rule.id==='rabbani')warnings.push('RABBANI: tanggal penerbitan, volume, nomor jurnal, DOI dan jumlah halaman terbit berasal dari penerbit, bukan data mahasiswa. Elemen contoh dinetralkan; periksa penempatan abstrak dalam Word.');
+ if(rule.id==='rabbani')warnings.push('RABBANI: hanya abstrak Bahasa Indonesia digunakan sesuai pilihan pengguna. Contoh tanggal penerbitan, volume, nomor, DOI dan jumlah halaman tidak menjadi metadata artikel; periksa hasil di Word 2010.');
  warnings.push('Volume/nomor/tahun/DOI contoh dari template mungkin belum diterbitkan; editor wajib memverifikasi dan melengkapinya sebelum pengiriman.');
  if(headers<Object.keys(rule.header||{}).length)warnings.push('Sebagian running header tidak terpetakan secara otomatis; cek semua halaman di Word.');
- return {blob,details:{journal:rule.id,templateBased:true,frontFields:frontCount,contentBlocks:imported,sourceTables:extracted.tables,sourceFootnotes:extracted.hasNotes,sourceAssets:deps.assets,sourceRelationships:deps.relationships,headersModified:headers,footerFixes,propertyOrderFixes,otherPartOrderFixes,warnings:[...new Set(warnings)],extracted:{title:info.title,author:info.author,affiliation:info.affiliation,email:info.email,abstractEnWords:absEnWords,abstractIdWords:absIdWords}}};
+ return {blob,details:{journal:rule.id,templateBased:true,frontFields:frontCount,contentBlocks:imported,sourceTables:extracted.tables,sourceFootnotes:extracted.hasNotes,sourceAssets:deps.assets,sourceRelationships:deps.relationships,packageErrors:guard.errors.length,packageWarnings:guard.warnings.length,headersModified:headers,footerFixes,propertyOrderFixes,otherPartOrderFixes,compatFixes,warnings:[...new Set(warnings)],extracted:{title:info.title,author:info.author,affiliation:info.affiliation,email:info.email,abstractEnWords:absEnWords,abstractIdWords:absIdWords}}};
 }
 global.ZainDocxEngine={build};
 })(typeof window!=='undefined'?window:globalThis);

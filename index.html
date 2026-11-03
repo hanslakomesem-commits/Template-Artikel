@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#153966">
-<title>ZAIN.NET v6 — 15 Template Jurnal Asli</title>
+<title>ZAIN.NET v10 — 15 Jurnal · LibreOffice Server</title>
 <style>
 :root{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;background:#f3f6fa;color:#182c42;--accent:#1657a1;--soft:#eaf2fb;--border:#dce5ee;--muted:#5f7184}*{box-sizing:border-box}body{margin:0}a{color:var(--accent)}
 header{background:linear-gradient(115deg,#102d52,#1b5484);color:white;padding:28px 20px 26px}header .inner{max-width:1100px;margin:auto}.brand{font-size:27px;font-weight:850;letter-spacing:.4px}.subtitle{margin:5px 0 0;font-size:14px;opacity:.94}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{border:1px solid #a7c2dd;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:650}
@@ -11,6 +11,7 @@ main{max-width:1100px;margin:25px auto 45px;padding:0 17px}.columns{display:grid
 .panel{background:white;border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:0 6px 22px #20385108;margin-bottom:20px}h1{font-size:21px;margin:0 0 8px}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 8px}.muted{color:var(--muted);font-size:13px;line-height:1.6;margin:4px 0 14px}
 label{display:block;font-size:13px;font-weight:750;margin:13px 0 7px}input:not([type=file]),select,textarea{width:100%;border:1px solid #b9cadb;border-radius:9px;padding:11px 12px;background:white;color:#102c4b;font:inherit;font-size:14px}input[type=file]{width:100%;padding:12px;border:1px dashed #8badcf;border-radius:10px;background:#f7faff;font-size:13px}input:focus,select:focus,textarea:focus{outline:2px solid #7aa9e5;outline-offset:1px}textarea{min-height:65px;resize:vertical}
 button,.button{background:var(--accent);color:white;border:none;border-radius:10px;padding:13px 18px;font:inherit;font-size:14px;font-weight:750;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:8px}button:disabled{opacity:.56;cursor:wait}.button.subtle{background:#e8f0f8;color:#154b84}.wide{width:100%}.small{font-size:12px;padding:9px 11px}.hint{background:var(--soft);padding:12px 14px;border-radius:9px;font-size:12px;line-height:1.55;color:#1e527d}.warn{background:#fff6e7;border-left:3px solid #dd9c2b;padding:11px 12px;border-radius:6px;font-size:12px;line-height:1.6}
+[hidden]{display:none!important}
 #progress{font-size:13px;margin-top:16px;padding:13px;border-radius:9px;background:#f1f6fc;white-space:pre-wrap;line-height:1.6;display:none}#progress[data-kind=error]{background:#fff0ef;color:#a42a2b}#progress[data-kind=success]{background:#ecf8ee;color:#1c6531}
 #details{display:none;margin-top:13px;padding:14px;border:1px solid #d5e4d9;border-radius:9px}#details ul{margin:10px 0 0;padding-left:18px;font-size:12px;line-height:1.65}details{margin-top:18px;border:1px solid var(--border);border-radius:10px;padding:12px}summary{cursor:pointer;font-weight:700;font-size:13px}fieldset{border:0;padding:0;margin:8px 0}fieldset .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:540px){fieldset .split{grid-template-columns:1fr}}
 #list{display:grid;gap:10px;max-height:690px;overflow:auto}article.journal{border:1px solid var(--border);padding:13px;border-radius:12px}article.journal.selected{border-color:#629ad4;background:#f7fafe}.jtop{display:flex;justify-content:space-between;align-items:start;gap:10px}.tag{font-size:11px;border-radius:6px;padding:4px 8px;background:#edf1f7;color:#536b84;white-space:nowrap}.btnrow{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.searchrow{display:flex;align-items:center;gap:8px;margin:15px 0}.searchrow input{flex:1}footer{text-align:center;font-size:12px;color:#6e7f91;margin-top:32px}#rules{border-left:3px solid #6fa0d1;padding-left:11px;font-size:13px;color:#496178;margin:12px 0}
@@ -19,23 +20,24 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
 <body>
 <header><div class="inner">
   <div class="brand">ZAIN.NET</div><p class="subtitle">Multi Template Artikel — memakai file DOCX jurnal asli sebagai kerangka dokumen</p>
-  <div class="chips"><span class="chip">15 Jurnal</span><span class="chip">v6.0 · Perbaikan DOCX untuk Word Lama</span><span class="chip">100% GitHub Pages</span><span class="chip">Tanpa backend / API</span><span class="chip">Pemrosesan lokal di browser</span></div>
+  <div class="chips"><span class="chip">15 Jurnal</span><span class="chip">v10.0 · Hasil Word via LibreOffice Server</span><span class="chip">GitHub Pages + Backend LibreOffice</span><span class="chip">Berkas final bukan dari browser langsung</span></div>
 </div></header>
 <main>
 <div class="columns">
 <section>
 <div class="panel">
   <h1>Format artikel jurnal</h1>
-  <p class="muted">Unggah artikel Word, pilih jurnal, kemudian download hasil DOCX. Logo dan tata letak pembuka berasal dari file template Word jurnal, bukan gambar atau CSS tiruan.</p>
-  <div class="hint"><strong>Perbaikan v6:</strong> struktur pengaturan DOCX kini dinormalisasi untuk mengurangi kegagalan baca di Word 2010. Kompatibilitas Word 2010 tetap harus diuji pada komputer Anda.</div>
+  <p class="muted">Unggah artikel Word, pilih jurnal, kemudian unduh hasil DOCX yang telah disimpan ulang oleh LibreOffice di server. Logo dan tata letak pembuka berasal dari template asli.</p>
+  <div class="hint"><strong>Update v10:</strong> hasil DOCX dari mesin JavaScript adalah file sementara saja. Setelah format diterapkan, file dikirim ke server LibreOffice untuk disimpan ulang sebagai DOCX final. Jika server gagal, tidak ada unduhan file mentah. RABBANI tetap hanya menggunakan abstrak Bahasa Indonesia.</div>
   <div class="hint"><strong>Mode Template Asli</strong> — identitas jurnal, logo, header/footer, tabel abstrak dan gaya dokumen awal dipertahankan semampunya. Isi artikel diambil dari Word Anda.</div>
   <label for="journal">1. Pilih jurnal</label>
   <select id="journal"><option value="">Memuat jurnal…</option></select>
   <div id="rules" role="note">Memuat aturan jurnal…</div>
+  <div class="hint" id="rabbaniNote" hidden><strong>RABBANI khusus:</strong> website akan mengabaikan abstrak Inggris dari dokumen mahasiswa dan memasukkan hanya ABSTRAK Bahasa Indonesia ke kotak dua kolom; jurnal lain tetap tidak berubah.</div>
   <a id="originalLink" href="#" download class="button subtle small">Unduh DOCX template asli</a>
   <label for="file">2. Unggah artikel mahasiswa (.docx)</label>
   <input id="file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-  <p class="muted">File tidak dikirim ke server. Maksimum yang disarankan: 25 MB. Artikel harus memiliki heading Pendahuluan/Introduction agar isi dapat dideteksi.</p>
+  <p class="muted">PENTING: file artikel diproses terlebih dahulu di browser, lalu DOCX sementara dikirim ke server LibreOffice untuk membuat unduhan akhir. Batas 25 MB. Jangan gunakan data sensitif pada server yang tidak Anda percayai.</p>
   <details id="meta"><summary>3. Perbaiki identitas artikel secara manual (opsional)</summary>
     <p class="muted">Biarkan kosong untuk deteksi otomatis. Jika metadata salah terbaca, isi bagian yang tepat.</p>
     <label for="title">Judul artikel</label><textarea id="title" rows="2" placeholder="Jika deteksi judul kurang tepat"></textarea>
@@ -45,15 +47,15 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
     <details><summary>Abstrak dan kata kunci (opsional)</summary>
       <label for="abstractId">Abstrak Bahasa Indonesia</label><textarea id="abstractId" rows="4" placeholder="Biarkan kosong untuk membaca dari artikel"></textarea>
       <label for="keywordsId">Kata Kunci</label><input id="keywordsId" placeholder="kata 1; kata 2; kata 3">
-      <label for="abstractEn">Abstract English</label><textarea id="abstractEn" rows="4" placeholder="Biarkan kosong untuk membaca dari artikel"></textarea>
-      <label for="keywordsEn">Keywords</label><input id="keywordsEn" placeholder="keyword 1; keyword 2; keyword 3">
+      <div id="englishFields"><label for="abstractEn">Abstract English</label><textarea id="abstractEn" rows="4" placeholder="Biarkan kosong untuk membaca dari artikel"></textarea>
+      <label for="keywordsEn">Keywords</label><input id="keywordsEn" placeholder="keyword 1; keyword 2; keyword 3"></div>
     </details>
     <details><summary>Tanggal proses penerbitan (hanya jika resmi)</summary>
       <p class="muted">Jangan masukkan tanggal dari contoh jurnal. Biarkan kosong bila belum diterbitkan.</p>
       <label for="doi">DOI resmi (jika sudah diberikan penerbit)</label><input id="doi" placeholder="Kosongkan jika belum ada"><div class="split"><div><label for="volume">Volume resmi</label><input id="volume" placeholder="—"></div><div><label for="issue">Nomor terbitan resmi</label><input id="issue" placeholder="—"></div></div><label for="publicationDate">Bulan dan tahun terbit resmi</label><input id="publicationDate" placeholder="—"><fieldset><div class="split"><div><label for="received">Received</label><input id="received" placeholder="—"></div><div><label for="revised">Revised</label><input id="revised" placeholder="—"></div><div><label for="accepted">Accepted</label><input id="accepted" placeholder="—"></div><div><label for="published">Published</label><input id="published" placeholder="—"></div></div></fieldset>
     </details>
   </details>
-  <button id="start" type="button" class="wide" style="margin-top:18px">4. Proses dan Download Word (.docx)</button>
+  <button id="start" type="button" class="wide" style="margin-top:18px">4. Format → Server LibreOffice → Download DOCX</button>
   <div id="progress" role="status" aria-live="polite"></div>
   <div id="details"><h3>Ringkasan pemrosesan</h3><div id="stat"></div><ul id="warnings"></ul></div>
 </div>
@@ -69,8 +71,8 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
 </div>
 </aside>
 </div>
-<footer>ZAIN.NET v6.0 · Browser-only DOCX formatter · Semua pemrosesan dilakukan di perangkat Anda · Tidak memerlukan URL Python</footer>
+<footer>ZAIN.NET v10.0 · GitHub Pages + server LibreOffice · Server menyimpan ulang DOCX sebelum diunduh</footer>
 </main>
-<script src="lib/jszip.min.js?v=6.0"></script><script src="js/docx-engine.js?v=6.0-wordfix"></script><script src="js/app.js?v=6.0-wordfix"></script>
+<script src="lib/jszip.min.js?v=10.0"></script><script src="js/docx-engine.js?v=10.0"></script><script src="config.js?v=10.0"></script><script src="js/app.js?v=10.0"></script>
 </body>
 </html>

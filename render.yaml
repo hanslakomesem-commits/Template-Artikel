@@ -1,13 +1,14 @@
-# Render Blueprint: 1 hosting untuk frontend + backend.
-# Tidak membutuhkan API key; frontend terhubung ke origin yang sama.
 services:
   - type: web
-    name: zainnet-artikel-engine
-    runtime: python
-    plan: free
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
-    healthCheckPath: /health
+    name: zainnet-word-converter
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.11
+      - key: ALLOWED_ORIGINS
+        value: https://hanslakomesem-commits.github.io
+      - key: LIBREOFFICE_TIMEOUT
+        value: "120"
+      - key: MAX_DOCX_MB
+        value: "25"
