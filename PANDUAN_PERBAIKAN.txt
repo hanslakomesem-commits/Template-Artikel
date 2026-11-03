@@ -1,0 +1,25 @@
+ZAIN.NET v10.1 — patch DIAGNOSTIK error Corrupted ZIP
+
+Sumber: website ZAIN.NET v10, tidak mengubah 15 template, aturan jurnal, atau backend LibreOffice.
+
+Yang perlu diunggah ke repository GitHub branch main:
+  index.html       (root)
+  js/app.js        (folder js)
+
+JANGAN unggah PANDUAN_PERBAIKAN.txt dan JANGAN mengganti config.js yang sudah
+berisi https://word-converter.zainnet.blitz.cloud.
+
+Cara penggunaan:
+  1. Backup index.html dan js/app.js lama atau catat commit sebelumnya.
+  2. Ganti dua file yang disebut di atas menggunakan GitHub Edit/Upload.
+  3. Pastikan GitHub Actions Pages berhasil, lalu Ctrl+Shift+R di website.
+  4. Pilih artikel dan jurnal RABBANI, proses.
+  5. Error sekarang menyebut file yang kosong atau tidak valid.
+
+Catatan:
+  - Fitur ini menambahkan pemeriksaan dan pesan error spesifik; bukan jaminan
+    memperbaiki artikel DOCX yang aslinya memang kosong/rusak.
+  - File Word yang berhasil diproses tetap melalui server LibreOffice v10.
+  - Jika browser menyatakan artikel 0 byte: buka dokumen di Word lalu Save As DOCX.
+  - Jika template 0 byte: pastikan path templates/rabbani/word2010_base.docx
+    benar-benar terunggah dan dapat diunduh dari situs GitHub Pages.
