@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#153966">
-<title>ZAIN.NET v10 — 15 Jurnal · LibreOffice Server</title>
+<title>ZAIN.NET v10.2 — 15 Jurnal · LibreOffice Server</title>
 <style>
 :root{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;background:#f3f6fa;color:#182c42;--accent:#1657a1;--soft:#eaf2fb;--border:#dce5ee;--muted:#5f7184}*{box-sizing:border-box}body{margin:0}a{color:var(--accent)}
 header{background:linear-gradient(115deg,#102d52,#1b5484);color:white;padding:28px 20px 26px}header .inner{max-width:1100px;margin:auto}.brand{font-size:27px;font-weight:850;letter-spacing:.4px}.subtitle{margin:5px 0 0;font-size:14px;opacity:.94}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.chip{border:1px solid #a7c2dd;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:650}
@@ -55,6 +55,14 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
       <label for="doi">DOI resmi (jika sudah diberikan penerbit)</label><input id="doi" placeholder="Kosongkan jika belum ada"><div class="split"><div><label for="volume">Volume resmi</label><input id="volume" placeholder="—"></div><div><label for="issue">Nomor terbitan resmi</label><input id="issue" placeholder="—"></div></div><label for="publicationDate">Bulan dan tahun terbit resmi</label><input id="publicationDate" placeholder="—"><fieldset><div class="split"><div><label for="received">Received</label><input id="received" placeholder="—"></div><div><label for="revised">Revised</label><input id="revised" placeholder="—"></div><div><label for="accepted">Accepted</label><input id="accepted" placeholder="—"></div><div><label for="published">Published</label><input id="published" placeholder="—"></div></div></fieldset>
     </details>
   </details>
+  <div class="hint" id="serverWakeHelp" style="margin-top:18px;margin-bottom:12px;line-height:1.6">
+    <strong>Server LibreOffice sedang tidur atau sulit dihubungi?</strong><br>
+    Pada hosting gratis blitz.cloud, server dapat tertidur saat tidak digunakan. Klik tombol di bawah untuk membuka pemeriksaan server pada tab baru; permintaan ini juga dapat membangunkan server yang tidur.
+    <div style="margin-top:10px">
+      <a id="serverWakeLink" class="button subtle small" href="https://word-converter.zainnet.blitz.cloud/api/health" target="_blank" rel="noopener noreferrer" title="Buka pemeriksaan kesehatan server LibreOffice di tab baru">🔔 Bangunkan / Periksa Server LibreOffice ↗</a>
+    </div>
+    <div style="margin-top:8px">Jika tab baru menampilkan <code>"status":"ok"</code>, kembali ke halaman ZAIN.NET lalu tekan <strong>Format → Server LibreOffice → Download DOCX</strong>. Jika masih gagal, periksa jaringan, CORS, atau log server; pesan <em>Failed to fetch</em> tidak selalu berarti server tidur.</div>
+  </div>
   <button id="start" type="button" class="wide" style="margin-top:18px">4. Format → Server LibreOffice → Download DOCX</button>
   <div id="progress" role="status" aria-live="polite"></div>
   <div id="details"><h3>Ringkasan pemrosesan</h3><div id="stat"></div><ul id="warnings"></ul></div>
@@ -71,8 +79,8 @@ button,.button{background:var(--accent);color:white;border:none;border-radius:10
 </div>
 </aside>
 </div>
-<footer>ZAIN.NET v10.1 · GitHub Pages + server LibreOffice · Server menyimpan ulang DOCX sebelum diunduh</footer>
+<footer>ZAIN.NET v10.2 · GitHub Pages + server LibreOffice · Server menyimpan ulang DOCX sebelum diunduh</footer>
 </main>
-<script src="lib/jszip.min.js?v=10.1"></script><script src="js/docx-engine.js?v=10.1"></script><script src="config.js?v=10.1"></script><script src="js/app.js?v=10.1"></script>
+<script src="lib/jszip.min.js?v=10.2"></script><script src="js/docx-engine.js?v=10.2"></script><script src="config.js?v=10.2"></script><script src="js/app.js?v=10.2"></script>
 </body>
 </html>
